@@ -13,6 +13,7 @@ export const Colors = {
         primary: primaryLight,
         notSelected: '#8B8C92',
         selected: primaryLight,
+        slate200: "#F1F5F9",
     },
     dark: {
         text: '#ECEDEE',
