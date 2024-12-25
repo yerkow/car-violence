@@ -14,6 +14,7 @@ export const Colors = {
         notSelected: '#8B8C92',
         selected: primaryLight,
         slate200: "#F1F5F9",
+        gray: "#d4d4d4"
     },
     dark: {
         text: '#ECEDEE',

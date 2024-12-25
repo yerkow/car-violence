@@ -83,7 +83,7 @@ const Stepper = ({ current, handlePress }: { current: number, handlePress: (step
 
     console.log(stepWidth, stepPositionX.value)
     useEffect(() => {
-        stepPositionX.value = withSpring((stepWidth + 10) * current, { duration: 1000, stiffness: 10, dampingRatio: 1 })
+        stepPositionX.value = withSpring((stepWidth + 10) * current, { duration: 1500, stiffness: 10, dampingRatio: 10 })
     }, [current])
     return <View onLayout={onStepperLayout} style={[style.stepper]}>
         <Animated.View style={[{
@@ -98,7 +98,7 @@ const Stepper = ({ current, handlePress }: { current: number, handlePress: (step
         {new Array(4).fill('.').map((step, idx) => <Pressable key={idx} onPress={() => handlePress(idx)} style={{ flex: 1 }}><View style={[{
             borderRadius: 10,
             height: 8,
-            backgroundColor: Colors.light.gray,
+            backgroundColor: Colors.light.notSelected,
         }]} /></Pressable>)}
     </View>
 
