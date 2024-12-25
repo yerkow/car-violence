@@ -1,8 +1,8 @@
 import { Colors } from "@/constants/Colors"
 import { StyleSheet, Text, TextProps } from "react-native"
 
-export const Typography = ({ variant, children, style, ...props }: TextProps & { variant: "h1" | "h2" | "h3" | "p1" | 'p2' | "span" }) => {
-    return <Text style={[styles[variant], style]} {...props} >
+export const Typography = ({ variant, children, center, style, ...props }: TextProps & { variant: "h1" | "h2" | "h3" | "p1" | 'p2' | "span", center?: boolean }) => {
+    return <Text style={[styles[variant], style, center && styles.center]} {...props} >
         {children}
     </Text>
 }
@@ -36,5 +36,8 @@ const styles = StyleSheet.create({
     },
     span: {
         fontSize: 14
+    },
+    center: {
+        textAlign: 'center'
     }
 })

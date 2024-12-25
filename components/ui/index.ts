@@ -1,6 +1,8 @@
 
 export { Button } from './Button';
-export { Checkbox } from './checkbox';
+export { Card } from './Card';
+export { Checkbox } from './Checkbox';
 export { Input } from './Input';
 export { Typography } from './Typography';
+
 

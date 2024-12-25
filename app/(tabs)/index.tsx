@@ -1,30 +1,47 @@
-import { Link } from "expo-router";
-import { StyleSheet, View } from "react-native";
+import { ScreenContainer } from "@/components";
+import { Card, Typography } from "@/components/ui";
+import { mockCardData } from "@/constants/Colors";
+import { Dimensions, FlatList, SafeAreaView, ScrollView, StyleSheet } from "react-native";
 
 
 export default function HomeScreen() {
     return (
-        <View>
-            <Link href={'/(auth)/confirmation'}>confirm</Link>
-        </View>
+        <ScreenContainer style={[styles.container]} >
+            <SafeAreaView >
+                <ScrollView contentContainerStyle={[styles.container]}>
+                    <Typography variant="h2">Последние новости</Typography>
+                    <FlatList showsHorizontalScrollIndicator={false} contentContainerStyle={[styles.newsContainer]} horizontal data={mockCardData} renderItem={({ item }) => <Card style={[styles.news]} {...item} />}
+                        keyExtractor={(item) => item.title}
+                    />
+                    <Typography center variant="h2">Последние нарушения</Typography>
+                    {mockCardData.map((item) => <Card style={[styles.violences]} {...item} />)}
+                </ScrollView>
+            </SafeAreaView>
+        </ScreenContainer >
     );
 }
 
 const styles = StyleSheet.create({
-    titleContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 8,
+    container: {
+        gap: 20,
+        paddingBottom: 30
     },
-    stepContainer: {
-        gap: 8,
-        marginBottom: 8,
+    violenceContainer: {
+        width: 400,
+        gap: 10
     },
-    reactLogo: {
-        height: 178,
-        width: 290,
-        bottom: 0,
-        left: 0,
-        position: "absolute",
+    newsContainer: {
+        display: 'flex',
+        minHeight: 230,
+        gap: 20
+    },
+    violences: {
+        width: Dimensions.get('window').width - 40,
+        height: 280
+
+    },
+    news: {
+        width: Dimensions.get('window').width / 2,
+        height: Dimensions.get('window').width / 2 - 30,
     },
 });
