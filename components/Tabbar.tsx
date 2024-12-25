@@ -49,7 +49,6 @@ export function Tabbar({ state, descriptors, navigation }: BottomTabBarProps) {
                     const icon = tabs[route.name as keyof typeof tabs].icon
 
                     const isFocused = selected == index
-                    console.log(index, state.index)
 
                     const onPress = () => {
                         const event = navigation.emit({

@@ -1,7 +1,7 @@
 
+import { ScreenContainer } from "@/components";
 import { Button, Typography } from "@/components/ui";
 import { Colors } from "@/constants/Colors";
-import Constants from "expo-constants";
 import { Link, Tabs, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { Image, LayoutChangeEvent, Pressable, StyleSheet, View } from "react-native";
@@ -9,27 +9,27 @@ import Animated, { FadeInRight, FadeInUp, FadeOutLeft, useAnimatedStyle, useShar
 
 const steps = [
     {
-        img: require('../assets/onbording/1.png'),
+        img: require('../../assets/onbording/1.png'),
         title: "Обеспечиваем порядок на дорогах вместе!",
         desc: "Станьте частью сообщества, которое заботится о безопасности на дорогах общего пользования.",
     },
     {
-        img: require('../assets/onbording/2.png'),
+        img: require('../../assets/onbording/2.png'),
         title: "Фиксируйте нарушения на дорогах",
         desc: "Снимайте фото или видео нарушений и помогайте улучшить безопасность.",
     },
     {
-        img: require('../assets/onbording/3.png'),
+        img: require('../../assets/onbording/3.png'),
         title: "Отправляйте данные в органы правопорядка",
         desc: "В пару кликов ваше обращение будет передано для рассмотрения и действий.",
     },
     {
-        img: require('../assets/onbording/4.png'),
+        img: require('../../assets/onbording/4.png'),
         title: "Получайте вознаграждения за ответственность",
         desc: "Ваша активная гражданская позиция может быть не только полезной, но и вознаграждаемой.",
     },
     {
-        img: require('../assets/onbording/5.png'),
+        img: require('../../assets/onbording/5.png'),
         title: "Начнем?",
         desc: "Присоединяйтесь и сделайте дороги безопаснее!",
     },
@@ -41,14 +41,12 @@ export default function Onbording() {
     const router = useRouter()
     const handleNext = () => {
         if (step == 4) {
-            //router.push('/register')
-
-            setStep(0)
+            router.push('/register')
             return;
         }
         setStep(step + 1)
     }
-    return <View style={[style.container]}>
+    return <ScreenContainer style={[style.container]}>
         <Tabs.Screen options={{ headerShown: false }} />
         <Animated.View key={'i' + step} entering={FadeInUp} >
             <Image source={steps[step].img} style={[style.image]} />
@@ -66,7 +64,7 @@ export default function Onbording() {
             {step == 4 && <Typography style={{ marginTop: 10, textAlign: 'center' }} variant="span">Есть аккаунт? <Link style={[style.signin]} href={'/login'}>Войти</Link></Typography>}
         </View>
 
-    </View>
+    </ScreenContainer>
 }
 const Stepper = ({ current, handlePress }: { current: number, handlePress: (step: number) => void }) => {
     const [dim, setDim] = useState({ width: 100, height: 20 })
@@ -81,7 +79,6 @@ const Stepper = ({ current, handlePress }: { current: number, handlePress: (step
         }
     })
 
-    console.log(stepWidth, stepPositionX.value)
     useEffect(() => {
         stepPositionX.value = withSpring((stepWidth + 10) * current, { duration: 1000, stiffness: 10, dampingRatio: 1 })
     }, [current])
@@ -106,14 +103,9 @@ const Stepper = ({ current, handlePress }: { current: number, handlePress: (step
 
 const style = StyleSheet.create({
     container: {
-        paddingTop: Constants.statusBarHeight + 50,
-        paddingHorizontal: 20,
-        backgroundColor: Colors.light.background,
-        height: '100%',
         display: 'flex',
         alignItems: 'center',
         justifyContent: "space-evenly"
-
     },
     image: {
         width: 300, height: 300

@@ -19,7 +19,7 @@ export const Button = ({ children, ...props }: ButtonProps) => {
     const handlePressOut = () => {
         scale.value = withSpring(1); // Returns to normal size
     };
-    return <Pressable onPressIn={handlePressIn} onPressOut={handlePressOut} style={[styles.container]} {...props}>
+    return <Pressable onPressIn={handlePressIn} onPressOut={handlePressOut} style={[styles.container, props.disabled && styles.disabled]} {...props}>
         <Animated.View style={[animatedStyle]}>
             <Text style={[styles.text]}>{children}</Text>
         </Animated.View>
@@ -41,5 +41,8 @@ const styles = StyleSheet.create({
         color: Colors.light.background,
         fontSize: 14,
         fontWeight: 'bold'
+    },
+    disabled: {
+        opacity: .6
     }
 })
