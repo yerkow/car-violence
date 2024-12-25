@@ -11,7 +11,6 @@ interface InputProps extends MaskedTextInputProps {
 export const Input = ({ label, style, secureTextEntry, ...props }: InputProps) => {
     const [focused, setFocused] = useState(false)
     const [secure, setSecure] = useState(secureTextEntry)
-    console.log(focused)
     return <View style={[styles.container]}>
         <Typography variant="span">{label}</Typography>
         <MaskedTextInput secureTextEntry={secure} placeholderTextColor={Colors.light.borderColor} onFocus={() => setFocused(true)} onBlur={() => setFocused(false)} style={[styles.input, focused && styles.focused]} {...props} />

@@ -5,7 +5,7 @@ import { StyleSheet, View } from "react-native";
 export default function HomeScreen() {
     return (
         <View>
-            <Link href={'/register'}>register</Link>
+            <Link href={'/(auth)/confirmation'}>confirm</Link>
         </View>
     );
 }

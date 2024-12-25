@@ -1,6 +1,7 @@
+import { Typography } from "@/components/ui/Typography";
 import { Colors } from "@/constants/Colors";
 import { ReactNode } from "react";
-import { Pressable, PressableProps, StyleSheet, Text } from "react-native";
+import { Pressable, PressableProps, StyleSheet } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 interface ButtonProps extends PressableProps {
     children: ReactNode
@@ -21,7 +22,7 @@ export const Button = ({ children, ...props }: ButtonProps) => {
     };
     return <Pressable onPressIn={handlePressIn} onPressOut={handlePressOut} style={[styles.container, props.disabled && styles.disabled]} {...props}>
         <Animated.View style={[animatedStyle]}>
-            <Text style={[styles.text]}>{children}</Text>
+            <Typography variant="span" style={[styles.text]}>{children}</Typography>
         </Animated.View>
     </Pressable>
 }
@@ -39,7 +40,6 @@ const styles = StyleSheet.create({
     },
     text: {
         color: Colors.light.background,
-        fontSize: 14,
         fontWeight: 'bold'
     },
     disabled: {

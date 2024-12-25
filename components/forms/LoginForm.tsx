@@ -10,11 +10,11 @@ export const LoginForm = () => {
         password: "",
     })
     return <View style={[styles.container]}>
-        <Input keyboardType="number-pad" value={formData.tel} onChangeText={value => setFormData({ ...formData, tel: value })} mask="+7(999) 99 99 99" label="Номер телефона" placeholder="+7 (777) 322 32 32" />
+        <Input keyboardType="number-pad" value={formData.tel} onChangeText={value => setFormData({ ...formData, tel: value })} mask="+7(999) 999 99 99" label="Номер телефона" placeholder="+7 (777) 322 32 32" />
         <Input secureTextEntry value={formData.password} onChangeText={value => setFormData({ ...formData, password: value })} label="Пароль" placeholder="Введите пароль" />
         <Link style={[styles.link]} href={'/'}>Забыли пароль?</Link>
         <Button>Войти</Button>
-        <Typography style={{ marginTop: 10, textAlign: 'center' }} variant="span"> Нет аккаунта?  <Link style={[styles.link]} href={'/login'}>Зарегистрируйтесь</Link></Typography>
+        <Typography style={{ marginTop: 10, textAlign: 'center' }} variant="span"> Нет аккаунта?  <Link style={[styles.link]} href={'/(auth)/register'}>Зарегистрируйтесь</Link></Typography>
     </View>
 }
 const styles = StyleSheet.create({

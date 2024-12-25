@@ -1,10 +1,11 @@
 import { Button, Checkbox, Input, Typography } from "@/components/ui"
 import { Colors } from "@/constants/Colors"
-import { Link } from "expo-router"
+import { Link, useRouter } from "expo-router"
 import { useState } from "react"
 import { StyleSheet, View } from "react-native"
 
 export const RegisterForm = () => {
+    const router = useRouter()
     const [formData, setFormData] = useState({
         name: "",
         tel: "",
@@ -14,7 +15,7 @@ export const RegisterForm = () => {
     })
     return <View style={[styles.container]}>
         <Input value={formData.name} onChangeText={value => setFormData({ ...formData, name: value })} label="ФИО" placeholder="Ваше ФИО" />
-        <Input keyboardType="number-pad" value={formData.tel} onChangeText={value => setFormData({ ...formData, tel: value })} mask="+7(999) 99 99 99" label="Номер телефона" placeholder="+7 (777) 322 32 32" />
+        <Input keyboardType="number-pad" value={formData.tel} onChangeText={value => setFormData({ ...formData, tel: value })} mask="+7 (999) 999 99 99" label="Номер телефона" placeholder="+7 (777) 322 32 32" />
         <Input secureTextEntry value={formData.password} onChangeText={value => setFormData({ ...formData, password: value })} label="Пароль" placeholder="Создайте пароль" />
         <Input secureTextEntry value={formData.confirmPassword} onChangeText={value => setFormData({ ...formData, confirmPassword: value })} label="Подтвердите пароль" placeholder="Подтвердите пароль" />
         <View style={[styles.rulesContainer]}>
@@ -23,8 +24,10 @@ export const RegisterForm = () => {
                 Я прочитал(а) и согласен(на) с <Link style={[styles.link]} href={'/'}>Условиями использования</Link> и <Link style={[styles.link]} href={'/'}>Политикой конфиденциальности</Link>.
             </Typography>
         </View>
-        <Button >Создать аккаунт</Button>
-        <Typography style={{ marginTop: 10, textAlign: 'center' }} variant="span">Есть аккаунт? <Link style={[styles.link]} href={'/login'}>Войти</Link></Typography>
+        <Button onPress={() => {
+            router.push(`/(auth)/confirmation?info=${formData.tel}`)
+        }}  >Создать аккаунт</Button>
+        <Typography style={{ marginTop: 10, textAlign: 'center' }} variant="span">Есть аккаунт? <Link style={[styles.link]} href={'/(auth)/login'}>Войти</Link></Typography>
     </View>
 }
 const styles = StyleSheet.create({
