@@ -1,12 +1,14 @@
 import { ScreenContainer } from "@/components";
 import { Card, Typography } from "@/components/ui";
 import { mockCardData } from "@/constants/Colors";
+import { Link } from "expo-router";
 import { Dimensions, FlatList, SafeAreaView, ScrollView, StyleSheet } from "react-native";
 
 
 export default function HomeScreen() {
     return (
         <ScreenContainer style={[styles.container]} >
+            <Link href={'/(auth)/restore'}>restore</Link>
             <SafeAreaView >
                 <ScrollView contentContainerStyle={[styles.container]}>
                     <Typography variant="h2">Последние новости</Typography>
@@ -14,7 +16,7 @@ export default function HomeScreen() {
                         keyExtractor={(item) => item.title}
                     />
                     <Typography center variant="h2">Последние нарушения</Typography>
-                    {mockCardData.map((item) => <Card style={[styles.violences]} {...item} />)}
+                    {mockCardData.map((item) => <Card key={item.title} style={[styles.violences]} {...item} />)}
                 </ScrollView>
             </SafeAreaView>
         </ScreenContainer >

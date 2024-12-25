@@ -1,4 +1,5 @@
 import { Typography } from "@/components/ui/Typography";
+import { Link } from "expo-router";
 import { Image, StyleSheet, View, ViewProps } from "react-native";
 
 interface CardProps extends ViewProps {
@@ -8,14 +9,14 @@ interface CardProps extends ViewProps {
     desc: string
 }
 export const Card = ({ title, img, subtitle, desc, style, ...props }: CardProps) => {
-    return <View style={[style]} {...props}>
+    return <Link href={'/(auth)/onbording'}><View style={[style]} {...props}>
         <Image source={{ uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTap_RlEEM-bglQ2bXxrKS8hZwpAq1TZ6cxOA&s' }} style={[styles.img]} />
         <View style={[styles.textContainer]}>
             <Typography variant="h3">{title}</Typography>
             <Typography variant="span">{subtitle}</Typography>
             <Typography variant="p2">{desc.length > 40 ? desc.slice(0, 40) + "..." : desc}</Typography>
         </View>
-    </View>
+    </View></Link>
 }
 const styles = StyleSheet.create({
     img: {
