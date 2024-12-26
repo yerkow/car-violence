@@ -1,12 +1,14 @@
-import { ScreenContainer } from "@/components";
+import { ScreenContainer, Search } from "@/components";
 import { Card, Typography } from "@/components/ui";
 import { mockCardData } from "@/constants/Colors";
+import { Tabs } from "expo-router";
 import { Dimensions, FlatList, SafeAreaView, ScrollView, StyleSheet } from "react-native";
 
 
 export default function HomeScreen() {
     return (
         <ScreenContainer style={[styles.container]} >
+            <Tabs.Screen options={{ header: () => <Search /> }} />
             <SafeAreaView >
                 <ScrollView contentContainerStyle={[styles.container]}>
                     <Typography variant="h2">Последние новости</Typography>

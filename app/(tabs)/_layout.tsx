@@ -6,7 +6,7 @@ import React from 'react';
 export default function TabLayout() {
     return (
         <Tabs
-            tabBar={props => <Tabbar {...props} />}
+            tabBar={(props) => <Tabbar {...props} />}
         />
     );
 }
