@@ -3,7 +3,7 @@ import { FontAwesome, FontAwesome5, MaterialCommunityIcons } from "@expo/vector-
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { PlatformPressable } from '@react-navigation/elements';
 import { useLinkBuilder, useTheme } from '@react-navigation/native';
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import Animated, { interpolate, useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 
@@ -38,17 +38,15 @@ const tabs = {
 export function Tabbar({ state, descriptors, navigation }: BottomTabBarProps) {
     const { colors } = useTheme();
     const { buildHref } = useLinkBuilder();
-    const [selected, setSelected] = useState(0)
     const routes = [state.routes[0], state.routes[3], state.routes[1], state.routes[4], state.routes[2]]
     return (
         <View style={[TabbarStyles.container]}>
             {
                 routes.map((route, index) => {
-                    const { options } = descriptors[route.key];
-                    const label = tabs[route.name as keyof typeof tabs].label
+                    const { options } = descriptors[route.key]; const label = tabs[route.name as keyof typeof tabs].label
                     const icon = tabs[route.name as keyof typeof tabs].icon
 
-                    const isFocused = selected == index
+                    const isFocused = mapIndex(state.index) == index
 
                     const onPress = () => {
                         const event = navigation.emit({
@@ -60,7 +58,6 @@ export function Tabbar({ state, descriptors, navigation }: BottomTabBarProps) {
                         if (!isFocused && !event.defaultPrevented) {
                             navigation.navigate(route.name, route.params);
                         }
-                        setSelected(index)
                     };
                     const onLongPress = () => {
                         navigation.emit({
@@ -157,3 +154,12 @@ const TabbarItemStyles = StyleSheet.create({
 
 
 })
+const mapIndex = (idx: number) => {
+    switch (idx) {
+        case 3: return 1;
+        case 1: return 2;
+        case 4: return 3;
+        case 2: return 4;
+        default: return 0
+    }
+}

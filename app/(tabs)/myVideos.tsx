@@ -1,19 +1,24 @@
-import { StyleSheet, View } from "react-native";
+import { CustomHeader, ScreenContainer } from "@/components";
+import { Card } from "@/components/ui";
+import { Colors, mockCardData } from "@/constants/Colors";
+import { Tabs } from "expo-router";
+import { SafeAreaView, ScrollView, StyleSheet } from "react-native";
 
 
 export default function MyVideos() {
-    return <View></View>
+    return <ScreenContainer>
+        <Tabs.Screen options={{ header: (props) => <CustomHeader title="Мои видео" /> }} />
+        <SafeAreaView>
+            <ScrollView contentContainerStyle={[styles.container]}>
+                {mockCardData.map(item => <Card key={item.title} color={Colors.light.status['0']} variant="horizontal" {...item} />)}
+            </ScrollView>
+        </SafeAreaView>
+    </ScreenContainer>
+
 }
 
 const styles = StyleSheet.create({
-    headerImage: {
-        color: "#808080",
-        bottom: -90,
-        left: -35,
-        position: "absolute",
-    },
-    titleContainer: {
-        flexDirection: "row",
-        gap: 8,
-    },
+    container: {
+        gap: 10
+    }
 });
