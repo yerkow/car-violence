@@ -7,10 +7,10 @@ import { SafeAreaView, ScrollView, StyleSheet } from "react-native";
 
 export default function MyVideos() {
     return <ScreenContainer>
-        <Tabs.Screen options={{ header: (props) => <CustomHeader title="Мои видео" /> }} />
+        <Tabs.Screen options={{ header: (props) => <CustomHeader showBack={false} title="Мои видео" /> }} />
         <SafeAreaView>
             <ScrollView contentContainerStyle={[styles.container]}>
-                {mockCardData.map(item => <Card key={item.title} color={Colors.light.status['0']} variant="horizontal" {...item} />)}
+                {mockCardData.map(item => <Card key={item.title} color={Colors.light.status['2']} variant="horizontal" {...item} />)}
             </ScrollView>
         </SafeAreaView>
     </ScreenContainer>

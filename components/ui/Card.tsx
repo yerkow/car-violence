@@ -12,7 +12,7 @@ interface CardProps extends ViewProps {
     desc: string
 }
 export const Card = ({ variant = 'base', title, color, img, subtitle, desc, style, ...props }: CardProps) => {
-    return <Link href={'/'}><View style={[style, styles[variant], styles.container, { backgroundColor: color }]} {...props}>
+    return <Link href={'/video/1'}><View style={[style, styles[variant], styles.container, { backgroundColor: color }]} {...props}>
         <Image style={[{ width: "100%", height: '100%', borderRadius: 10, flex: 2 }, variant == 'horizontal' && styles.horizontalImg]} source={{ uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTap_RlEEM-bglQ2bXxrKS8hZwpAq1TZ6cxOA&s' }} />
         <View style={[styles.textContainer, variant == 'horizontal' && styles.horizontalText]}>
             <Typography variant="h3">{title}</Typography>
@@ -29,6 +29,7 @@ const styles = StyleSheet.create({
     },
     base: {
         flexDirection: 'column',
+        gap: 10
     },
     horizontal: {
         flexDirection: 'row',

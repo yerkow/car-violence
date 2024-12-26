@@ -51,7 +51,8 @@ export const Colors = {
         status: {
             0: "#FFE2E4",
             1: "#FFF4E4",
-            2: "#E7F4E8"
+            2: "#E7F4E8",
+            3: "#EAF2FF"
         }
     },
     dark: {
