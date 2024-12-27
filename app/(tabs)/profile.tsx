@@ -1,14 +1,18 @@
 import { CustomHeader, ListItem, LogoutButton, ProfileSection, ScreenContainer, UserBalance } from "@/components";
 import { Tabs } from "expo-router";
-import { StyleSheet } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 
 export default function Profile() {
-    return <ScreenContainer style={[styles.container]}>
+    return <ScreenContainer >
         <Tabs.Screen options={{ header: () => <CustomHeader showBack={false} title="Профиль" /> }} />
-        <ProfileSection />
-        <UserBalance />
-        <ListItem href={'/'} title="Настройки" />
-        <LogoutButton />
+        <ScrollView contentContainerStyle={[styles.container]} showsVerticalScrollIndicator={false}>
+            <ProfileSection />
+            <UserBalance />
+            <ListItem href={'/'} title="Настройки" />
+            <LogoutButton />
+
+            <UserBalance />
+        </ScrollView>
     </ScreenContainer>
 }
 

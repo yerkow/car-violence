@@ -13,7 +13,13 @@ export const Search = () => {
             <FontAwesome5 name="search" size={20} color={Colors.light.primary} />
             <Typography color={Colors.light.notSelected} variant="p2">Введите номер нарушения...</Typography>
         </Pressable>
-        <Modal visible={modalVisible} onRequestClose={closeModal} ><Typography variant="h1">Hello</Typography></Modal>
+        <Modal visible={modalVisible} onRequestClose={closeModal} animationType="fade"  >
+            <View style={[styles.modal]}>
+                <Pressable onPress={closeModal}>
+                    <Typography variant="h1">Hello</Typography>
+                </Pressable>
+            </View>
+        </Modal>
     </View>
 }
 const styles = StyleSheet.create({
@@ -34,4 +40,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16,
         flexDirection: 'row', gap: 16
     },
+    modal: {
+        paddingTop: Contants.statusBarHeight
+    }
 })

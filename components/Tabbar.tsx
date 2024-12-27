@@ -4,14 +4,15 @@ import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { PlatformPressable } from '@react-navigation/elements';
 import { useLinkBuilder, useTheme } from '@react-navigation/native';
 import { useEffect } from "react";
-import { StyleSheet, View } from "react-native";
+import { Dimensions, StyleSheet, View } from "react-native";
 import Animated, { interpolate, useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const tabs = {
     index: {
         label: 'Главная',
         icon: (color: string) => <MaterialCommunityIcons color={color} name="home" size={28} />,
-        href: '/index',
+        href: '/home',
     },
     myVideos: {
         label: 'Мои Видео',
@@ -37,10 +38,11 @@ const tabs = {
 
 export function Tabbar({ state, descriptors, navigation }: BottomTabBarProps) {
     const { colors } = useTheme();
+    const insets = useSafeAreaInsets()
     const { buildHref } = useLinkBuilder();
     const routes = [state.routes[0], state.routes[3], state.routes[1], state.routes[4], state.routes[2]]
     return (
-        <View style={[TabbarStyles.container]}>
+        <View style={[TabbarStyles.container, { paddingTop: 8, paddingBottom: (insets.bottom) + 8 }]}>
             {
                 routes.map((route, index) => {
                     const { options } = descriptors[route.key]; const label = tabs[route.name as keyof typeof tabs].label
@@ -105,7 +107,7 @@ export function Tabbar({ state, descriptors, navigation }: BottomTabBarProps) {
                                     <Animated.View style={[animatedIconStyle]}>
                                         {icon(isFocused ? Colors.light.selected : Colors.light.notSelected)}
                                     </Animated.View>
-                                    <Animated.Text style={[{ color: isFocused ? Colors.light.selected : Colors.light.notSelected }, animatedTextStyle]}>
+                                    <Animated.Text style={[{ color: isFocused ? Colors.light.selected : Colors.light.notSelected }, animatedTextStyle, { textAlign: 'center' }]}>
                                         {label}
                                     </Animated.Text>
                                 </View>
@@ -123,10 +125,13 @@ export function Tabbar({ state, descriptors, navigation }: BottomTabBarProps) {
 
 const TabbarStyles = StyleSheet.create({
     container: {
+        borderTopColor: Colors.light.borderColor,
+        borderTopWidth: 1,
         flexDirection: 'row',
-        justifyContent: 'center',
-        gap: 20,
-        paddingBottom: 20,
+        width: Dimensions.get('window').width,
+        alignItems: 'center',
+        justifyContent: 'space-evenly',
+        marginHorizontal: 'auto',
         backgroundColor: Colors.light.background
     }
 })
@@ -135,6 +140,7 @@ const TabbarItemStyles = StyleSheet.create({
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
+        flex: 1
     },
     icon: {
         width: 18, height: 18

@@ -10,7 +10,7 @@ export default function HomeScreen() {
         <ScreenContainer style={[styles.container]} >
             <Tabs.Screen options={{ header: () => <Search /> }} />
             <SafeAreaView >
-                <ScrollView contentContainerStyle={[styles.container]} showsVerticalScrollIndicator={false}>
+                <ScrollView contentContainerStyle={[styles.container]}>
                     <Typography variant="h2">Последние новости</Typography>
                     <FlatList showsHorizontalScrollIndicator={false} contentContainerStyle={[styles.newsContainer]} horizontal data={mockCardData} renderItem={({ item }) => <Card style={[styles.news]} variant="base" {...item} />}
                         keyExtractor={(item) => item.title}
@@ -26,6 +26,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
     container: {
         gap: 20,
+        paddingBottom: 30
     },
     violenceContainer: {
         width: 400,
