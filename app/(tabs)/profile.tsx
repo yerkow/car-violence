@@ -10,8 +10,6 @@ export default function Profile() {
             <UserBalance />
             <ListItem href={'/'} title="Настройки" />
             <LogoutButton />
-
-            <UserBalance />
         </ScrollView>
     </ScreenContainer>
 }

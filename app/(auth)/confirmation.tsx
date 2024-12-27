@@ -7,7 +7,6 @@ import { StyleSheet, View } from "react-native";
 
 export default function Confirmation() {
     const params = useLocalSearchParams()
-    console.log(params)
     return <ScreenContainer style={[styles.container]}>
         <View style={[styles.textContainer]}>
             <Typography style={[styles.center]} variant="h2">Введите код подтверждения</Typography>

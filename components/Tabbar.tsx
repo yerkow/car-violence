@@ -45,9 +45,9 @@ export function Tabbar({ state, descriptors, navigation }: BottomTabBarProps) {
         <View style={[TabbarStyles.container, { paddingTop: 8, paddingBottom: (insets.bottom) + 8 }]}>
             {
                 routes.map((route, index) => {
-                    const { options } = descriptors[route.key]; const label = tabs[route.name as keyof typeof tabs].label
+                    const { options } = descriptors[route.key];
+                    const label = tabs[route.name as keyof typeof tabs].label
                     const icon = tabs[route.name as keyof typeof tabs].icon
-
                     const isFocused = mapIndex(state.index) == index
 
                     const onPress = () => {
@@ -107,7 +107,7 @@ export function Tabbar({ state, descriptors, navigation }: BottomTabBarProps) {
                                     <Animated.View style={[animatedIconStyle]}>
                                         {icon(isFocused ? Colors.light.selected : Colors.light.notSelected)}
                                     </Animated.View>
-                                    <Animated.Text style={[{ color: isFocused ? Colors.light.selected : Colors.light.notSelected }, animatedTextStyle, { textAlign: 'center' }]}>
+                                    <Animated.Text style={[{ color: isFocused ? Colors.light.selected : Colors.light.notSelected }, animatedTextStyle]}>
                                         {label}
                                     </Animated.Text>
                                 </View>
@@ -140,7 +140,6 @@ const TabbarItemStyles = StyleSheet.create({
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        flex: 1
     },
     icon: {
         width: 18, height: 18
