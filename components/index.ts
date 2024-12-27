@@ -1,4 +1,5 @@
 
+export { Camera } from './CameraView';
 export { CustomHeader } from "./CustomHeader";
 export { LinkList, ListItem } from "./LinkList";
 export { LogoutButton } from './LogoutButton';

@@ -42,7 +42,7 @@ export function Tabbar({ state, descriptors, navigation }: BottomTabBarProps) {
     const { buildHref } = useLinkBuilder();
     const routes = [state.routes[0], state.routes[3], state.routes[1], state.routes[4], state.routes[2]]
     return (
-        <View style={[TabbarStyles.container, { paddingTop: 8, paddingBottom: (insets.bottom) + 8 }]}>
+        <View style={[TabbarStyles.container, { paddingTop: 8, paddingBottom: (insets.bottom) + 8, display: state.index == 1 ? 'none' : 'flex' }]}>
             {
                 routes.map((route, index) => {
                     const { options } = descriptors[route.key];
@@ -137,6 +137,7 @@ const TabbarStyles = StyleSheet.create({
 })
 const TabbarItemStyles = StyleSheet.create({
     container: {
+        flex: 1,
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',

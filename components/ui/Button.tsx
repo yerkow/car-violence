@@ -4,7 +4,7 @@ import { ReactNode } from "react";
 import { Pressable, PressableProps, StyleProp, StyleSheet, ViewStyle } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 interface ButtonProps extends PressableProps {
-    variant: 'primary' | 'outline',
+    variant?: 'primary' | 'outline',
     children: ReactNode
 }
 export const Button = ({ children, variant = 'primary', style, ...props }: ButtonProps) => {

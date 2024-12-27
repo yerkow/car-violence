@@ -60,7 +60,7 @@ export default function Onbording() {
         </Animated.View>
 
         <View style={[style.btnContainer]}>
-            <Button onPress={handleNext} >{step == 4 ? "Создать аккаунт" : "Дальше"}</Button>
+            <Button variant="primary" onPress={handleNext} >{step == 4 ? "Создать аккаунт" : "Дальше"}</Button>
             {step == 4 && <Typography style={{ marginTop: 10, textAlign: 'center' }} variant="span">Есть аккаунт? <Link style={[style.signin]} href={'/login'}>Войти</Link></Typography>}
         </View>
 
