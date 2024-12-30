@@ -1,5 +1,6 @@
 import { Typography } from '@/components/ui';
 import { Colors } from '@/constants/Colors';
+import { pickImage } from '@/utils';
 import { Entypo, FontAwesome6, MaterialCommunityIcons } from '@expo/vector-icons';
 import { CameraType, CameraView, useCameraPermissions } from 'expo-camera';
 import { usePathname, useRouter } from 'expo-router';
@@ -11,7 +12,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 type CameraModeType = 'picture' | 'video'
 const CONTROLS_HEIGHT = 200
 
-export function Camera({ setMedias, closeCameraOnEnd }: { setMedias: (media: string) => void, closeCameraOnEnd: () => void }) {
+export function Camera({ setMedias, closeCameraOnEnd }: { setMedias: (media: string[]) => void, closeCameraOnEnd: () => void }) {
     const [cameraMode, setCameraMode] = useState<CameraModeType>('picture')
     const [facing, setFacing] = useState<CameraType>('back');
     const [isRecording, setIsRecording] = useState(false);
@@ -44,7 +45,7 @@ export function Camera({ setMedias, closeCameraOnEnd }: { setMedias: (media: str
         try {
             let photo = await cameraRef.current?.takePictureAsync()
             console.log(photo)
-            setMedias(photo?.uri ?? "")
+            setMedias([photo?.uri ?? ""])
             closeCameraOnEnd()
         } catch (e) {
             console.log(e)
@@ -58,17 +59,20 @@ export function Camera({ setMedias, closeCameraOnEnd }: { setMedias: (media: str
                         <MaterialCommunityIcons name='close' size={32} color='white' />
                     </Pressable>
                 </CameraView>
-                <Controls mode={cameraMode} setMode={mode => setCameraMode(mode)} capture={capturePhoto} />
+                <Controls save={(value) => {
+                    setMedias(value)
+                    closeCameraOnEnd()
+                }} mode={cameraMode} setMode={mode => setCameraMode(mode)} capture={capturePhoto} />
             </View>
 
         </View>
     );
 }
 
-const Controls = ({ mode, setMode, capture }: { mode: CameraModeType, setMode: (mode: CameraModeType) => void, capture: () => Promise<void> }) => {
+const Controls = ({ mode, setMode, capture, save }: { mode: CameraModeType, setMode: (mode: CameraModeType) => void, capture: () => Promise<void>, save: (value: string[]) => void }) => {
     return <View style={[styles.controls]}>
         <View style={[styles.topControls]}>
-            <ImportBtn />
+            <ImportBtn save={save} />
             <CaptureBtn mode={mode} capture={capture} />
             <FlipBtn />
         </View>
@@ -89,9 +93,9 @@ const FlipBtn = () => {
     </View>
 
 }
-const ImportBtn = () => {
+const ImportBtn = ({ save }: { save: (value: string[]) => void }) => {
     return <View style={[styles.btn]}>
-        <Pressable><Entypo name='image' size={24} color={Colors.light.background} /></Pressable>
+        <Pressable onPress={() => pickImage(save)}><Entypo name='image' size={24} color={Colors.light.background} /></Pressable>
     </View>
 
 }
