@@ -2,11 +2,11 @@ import { Typography } from '@/components/ui';
 import { Colors } from '@/constants/Colors';
 import { pickImage } from '@/utils';
 import { Entypo, FontAwesome6, MaterialCommunityIcons } from '@expo/vector-icons';
-import { CameraType, CameraView, useCameraPermissions } from 'expo-camera';
+import { CameraType, CameraView, Camera as ExpoCamera, useCameraPermissions } from 'expo-camera';
 import { usePathname, useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { Button, Platform, Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+import Animated, { interpolateColor, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type CameraModeType = 'picture' | 'video'
@@ -51,6 +51,34 @@ export function Camera({ setMedias, closeCameraOnEnd }: { setMedias: (media: str
             console.log(e)
         }
     }
+    async function recordMedia() {
+        try {
+            await ExpoCamera.requestMicrophonePermissionsAsync()
+            setIsRecording(true)
+            let recording = await cameraRef.current?.recordAsync()
+            console.log(recording)
+        } catch (e) {
+            console.log(e)
+        }
+
+    }
+    async function stopRecord() {
+        cameraRef.current?.stopRecording()
+        setIsRecording(false)
+    }
+    const fn = () => {
+        if (cameraMode == 'picture') {
+            capturePhoto()
+        } else {
+            if (!isRecording) {
+                recordMedia()
+            }
+            else {
+                stopRecord()
+            }
+        }
+    }
+
     return (
         <View style={[{ paddingBottom: insets.bottom }]}>
             <View style={[styles.container]}>
@@ -62,18 +90,23 @@ export function Camera({ setMedias, closeCameraOnEnd }: { setMedias: (media: str
                 <Controls save={(value) => {
                     setMedias(value)
                     closeCameraOnEnd()
-                }} mode={cameraMode} setMode={mode => setCameraMode(mode)} capture={capturePhoto} />
+                }} isRecording={isRecording} mode={cameraMode} setMode={mode => {
+                    setCameraMode(mode)
+                    if (isRecording) {
+                        stopRecord()
+                    }
+                }} capture={fn} />
             </View>
 
         </View>
     );
 }
 
-const Controls = ({ mode, setMode, capture, save }: { mode: CameraModeType, setMode: (mode: CameraModeType) => void, capture: () => Promise<void>, save: (value: string[]) => void }) => {
+const Controls = ({ mode, setMode, capture, save, isRecording }: { mode: CameraModeType, setMode: (mode: CameraModeType) => void, capture: () => void, save: (value: string[]) => void, isRecording: boolean }) => {
     return <View style={[styles.controls]}>
         <View style={[styles.topControls]}>
             <ImportBtn save={save} />
-            <CaptureBtn mode={mode} capture={capture} />
+            <CaptureBtn mode={mode} capture={capture} isRecording={isRecording} />
             <FlipBtn />
         </View>
         <View style={[styles.bottomControls]}>
@@ -82,9 +115,33 @@ const Controls = ({ mode, setMode, capture, save }: { mode: CameraModeType, setM
     </View>
 
 }
-const CaptureBtn = ({ mode, capture }: { mode: CameraModeType, capture: () => Promise<void> }) => {
+const CaptureBtn = ({ mode, capture, isRecording }: { mode: CameraModeType, capture: () => void, isRecording: boolean }) => {
+    const size = useSharedValue(57)
+    const radius = useSharedValue(100)
+    const progress = useSharedValue(0)
+    const animatedStyle = useAnimatedStyle(() => {
+        return { width: size.value, height: size.value, borderRadius: radius.value }
+    })
+    const colorStyle = useAnimatedStyle(() => {
+        const backgroundColor = interpolateColor(
+            progress.value,
+            [0, 1],
+            [Colors.light.background, 'red'] // Transition from red to blue
+        );
+        return { backgroundColor };
+    });
+    useEffect(() => {
+        progress.value = withTiming(mode == 'picture' ? 0 : 1, { duration: 500 });
+    }, [mode])
+    useEffect(() => {
+        size.value = withSpring(isRecording ? 34 : 57);
+        radius.value = withTiming(isRecording ? 10 : 100, { duration: 200 });
+    }, [isRecording])
+    console.log(radius.value, "radius", isRecording, "RECORDING")
     return <View style={[styles.captureOuter]}>
-        <Pressable onPress={capture} style={[styles.captureInner, { backgroundColor: mode == 'picture' ? "white" : "red" }]} />
+        <Pressable onPress={capture}>
+            <Animated.View style={[styles.captureInner, animatedStyle, colorStyle]} />
+        </Pressable>
     </View>
 }
 const FlipBtn = () => {
@@ -161,7 +218,7 @@ const styles = StyleSheet.create({
         width: 64, height: 64, backgroundColor: Colors.light.background, borderRadius: 100, justifyContent: 'center', alignItems: 'center'
     },
     captureInner: {
-        width: 57, height: 57, backgroundColor: Colors.light.background, borderRadius: 100, borderWidth: 2, borderColor: 'black'
+        width: 57, height: 57, backgroundColor: Colors.light.background, borderWidth: 2, borderColor: 'black'
     },
     btn: {
         width: 56, height: 56, backgroundColor: 'rgba(255,255,255,.2)', borderRadius: 100, justifyContent: 'center', alignItems: 'center'
