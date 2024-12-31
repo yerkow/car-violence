@@ -56,6 +56,7 @@ export function Camera({ setMedias, closeCameraOnEnd }: { setMedias: (media: str
             await ExpoCamera.requestMicrophonePermissionsAsync()
             setIsRecording(true)
             let recording = await cameraRef.current?.recordAsync()
+            setMedias([recording?.uri ?? ""])
             console.log(recording)
         } catch (e) {
             console.log(e)
@@ -65,6 +66,9 @@ export function Camera({ setMedias, closeCameraOnEnd }: { setMedias: (media: str
     async function stopRecord() {
         cameraRef.current?.stopRecording()
         setIsRecording(false)
+        setTimeout(() => {
+            closeCameraOnEnd()
+        }, 1000)
     }
     const fn = () => {
         if (cameraMode == 'picture') {
@@ -120,7 +124,7 @@ const CaptureBtn = ({ mode, capture, isRecording }: { mode: CameraModeType, capt
     const radius = useSharedValue(100)
     const progress = useSharedValue(0)
     const animatedStyle = useAnimatedStyle(() => {
-        return { width: size.value, height: size.value, borderRadius: radius.value }
+        return { width: size.value, height: size.value, borderRadius: radius.value, borderWidth: isRecording ? 0 : 1 }
     })
     const colorStyle = useAnimatedStyle(() => {
         const backgroundColor = interpolateColor(
@@ -134,10 +138,9 @@ const CaptureBtn = ({ mode, capture, isRecording }: { mode: CameraModeType, capt
         progress.value = withTiming(mode == 'picture' ? 0 : 1, { duration: 500 });
     }, [mode])
     useEffect(() => {
-        size.value = withSpring(isRecording ? 34 : 57);
+        size.value = withSpring(isRecording ? 28 : 57);
         radius.value = withTiming(isRecording ? 10 : 100, { duration: 200 });
     }, [isRecording])
-    console.log(radius.value, "radius", isRecording, "RECORDING")
     return <View style={[styles.captureOuter]}>
         <Pressable onPress={capture}>
             <Animated.View style={[styles.captureInner, animatedStyle, colorStyle]} />

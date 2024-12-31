@@ -1,4 +1,5 @@
 import { Button, Typography } from "@/components/ui"
+import { Video } from "@/components/Video"
 import { Colors } from "@/constants/Colors"
 import { Entypo, MaterialIcons } from "@expo/vector-icons"
 import { Link } from "expo-router"
@@ -91,8 +92,12 @@ const MediasView = ({ medias, setMedias, openCamera }: MediasViewProps) => {
         <FlatList
             initialNumToRender={1}
             removeClippedSubviews={true}
-            ref={flatListRef} keyExtractor={(item, idx) => `${item}*idx`} horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={[styles.mediasViews]} data={medias} renderItem={({ item }) =>
-                <Image source={{ uri: item }} style={[styles.previewItem]} />}
+            ref={flatListRef} keyExtractor={(item, idx) => `${item}*idx`} horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={[styles.mediasViews]} data={medias} renderItem={({ item }: { item: string }) => {
+                if (item.includes('mp4') || item.includes('mov')) {
+                    return <Video source={item} style={[styles.previewItem]} />
+                }
+                return <Image source={{ uri: item }} style={[styles.previewItem]} />
+            }}
             onViewableItemsChanged={onViewableItemsChanged}
             viewabilityConfig={viewabilityConfig}
         />
@@ -122,10 +127,10 @@ const MediasView = ({ medias, setMedias, openCamera }: MediasViewProps) => {
 
 const styles = StyleSheet.create({
     container: {
+        justifyContent: 'center',
         gap: 10,
     },
     mediasViews: {
-        paddingHorizontal: 20,
         gap: 20
     },
 
@@ -141,7 +146,7 @@ const styles = StyleSheet.create({
         gap: 4
     },
     previewItem: {
-        width: width - 40, height: (width - 40) * 9 / 16, borderRadius: 10
+        width: width - 10, height: (width) * 9 / 16, borderRadius: 10
     },
     controlItem: {
         width: 60, height: 40, borderRadius: 10, overflow: 'hidden', position: 'relative',
