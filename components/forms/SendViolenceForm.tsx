@@ -1,4 +1,4 @@
-import { Button, Typography } from "@/components/ui"
+import { Button, Select, Typography } from "@/components/ui"
 import { Video } from "@/components/Video"
 import { Colors } from "@/constants/Colors"
 import { Entypo, MaterialIcons } from "@expo/vector-icons"
@@ -13,8 +13,13 @@ interface SendViolenceFormProps extends ViewProps {
 const width = Dimensions.get('window').width
 
 export const SendViolenceForm = ({ medias, openCamera, setMedias, style, ...props }: SendViolenceFormProps) => {
+    const [formData, setFormData] = useState({
+        city: ""
+    })
+
     return <View style={[style, styles.container]} {...props}>
         <MediasView medias={medias} setMedias={setMedias} openCamera={openCamera} />
+        <Select items={['Hello', 'World']} value={formData.city} onSelect={(value) => setFormData({ ...formData, city: value })} />
         <Link href={'/'}><Typography variant="span">Правила размещения фото/видео</Typography></Link>
         <Button variant="primary">Отправить</Button>
     </View>
