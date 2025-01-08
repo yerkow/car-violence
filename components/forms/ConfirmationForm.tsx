@@ -1,5 +1,6 @@
 import { Button, Typography } from "@/components/ui";
 import { Colors } from "@/constants/Colors";
+import { RegisterDTO } from "@/types";
 import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import {
@@ -10,7 +11,10 @@ import {
 } from 'react-native-confirmation-code-field';
 
 const CELL_COUNT = 4;
-export const ConfirmationForm = ({ tel }: { tel: string }) => {
+interface ConfirmationFormProps {
+    userData: RegisterDTO
+}
+export const ConfirmationForm = ({ userData }: ConfirmationFormProps) => {
     const [value, setValue] = useState('');
     const ref = useBlurOnFulfill({ value, cellCount: CELL_COUNT });
     const [props, getCellOnLayoutHandler] = useClearByFocusCell({

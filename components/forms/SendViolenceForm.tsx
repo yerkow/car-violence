@@ -1,10 +1,12 @@
-import { Button, Select, Typography } from "@/components/ui"
+import { FormContainer } from "@/components/forms/FormContainer"
+import { Button, DateTimePicker, Input, Select, Typography } from "@/components/ui"
 import { Video } from "@/components/Video"
 import { Colors } from "@/constants/Colors"
 import { Entypo, MaterialIcons } from "@expo/vector-icons"
 import { Link } from "expo-router"
 import { useCallback, useRef, useState } from "react"
-import { Dimensions, FlatList, Image, Pressable, StyleSheet, View, ViewProps, ViewToken } from "react-native"
+import { Dimensions, FlatList, Image, Keyboard, Pressable, StyleSheet, TouchableOpacity, View, ViewProps, ViewToken } from "react-native"
+
 interface SendViolenceFormProps extends ViewProps {
     medias: string[]
     setMedias: (value: string[]) => void;
@@ -14,15 +16,29 @@ const width = Dimensions.get('window').width
 
 export const SendViolenceForm = ({ medias, openCamera, setMedias, style, ...props }: SendViolenceFormProps) => {
     const [formData, setFormData] = useState({
-        city: ""
+        city: "",
+        street: "",
+        date: new Date(),
+        time: new Date(),
+        violence: "",
     })
-
-    return <View style={[style, styles.container]} {...props}>
+    const onChange = (key: string, value: string | Date) => {
+        setFormData({ ...formData, [key]: value })
+    }
+    return <FormContainer style={[style, styles.container]} {...props}>
         <MediasView medias={medias} setMedias={setMedias} openCamera={openCamera} />
-        <Select items={['Hello', 'World']} value={formData.city} onSelect={(value) => setFormData({ ...formData, city: value })} />
-        <Link href={'/'}><Typography variant="span">Правила размещения фото/видео</Typography></Link>
-        <Button variant="primary">Отправить</Button>
-    </View>
+        <TouchableOpacity activeOpacity={1} onPress={() => Keyboard.dismiss()}>
+            <View style={[styles.form]}>
+                <Input
+                    multiline numberOfLines={3} bg="dark" placeholder="Опишите нарушение" value={formData.violence} onChangeText={(_, value) => onChange('violence', value)} label="Описание" />
+                <Select label="Город" items={['Hello', 'World']} value={formData.city} onSelect={(value) => onChange('city', value)} placeholder="Выберите город" />
+                <Input bg="dark" placeholder="Укажите улицу" value={formData.street} onChangeText={(_, value) => onChange('street', value)} label="Улица" />
+                <DateTimePicker dateValue={formData.date} timeValue={formData.time} setValue={(key, value) => onChange(key, value)} bg="dark" label="Дата и время" />
+                <Link href={'/'}><Typography color={Colors.light.primary} variant="span">Правила размещения фото/видео</Typography></Link>
+                <Button variant="primary">Отправить</Button>
+            </View>
+        </TouchableOpacity>
+    </FormContainer>
 }
 
 interface MediasViewProps {
@@ -93,7 +109,7 @@ const MediasView = ({ medias, setMedias, openCamera }: MediasViewProps) => {
             }
         }
     };
-    return <View style={[styles.container]}>
+    return <View style={[styles.mediaContainer]}>
         <FlatList
             initialNumToRender={1}
             removeClippedSubviews={true}
@@ -123,7 +139,7 @@ const MediasView = ({ medias, setMedias, openCamera }: MediasViewProps) => {
                 </View>
             } />
             <Pressable style={[styles.controlItem, styles.addNew]} onPress={openCamera}>
-                <Entypo name="plus" size={32} />
+                <Entypo name="plus" size={32} color={Colors.light.primary} />
             </Pressable>
         </View>
         </View>
@@ -133,6 +149,11 @@ const MediasView = ({ medias, setMedias, openCamera }: MediasViewProps) => {
 const styles = StyleSheet.create({
     container: {
         justifyContent: 'center',
+        flex: 1,
+        gap: 10,
+        padding: 5,
+    },
+    mediaContainer: {
         gap: 10,
     },
     mediasViews: {
@@ -146,12 +167,15 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         gap: 5,
     },
+    form: {
+        gap: 10
+    },
     controlsList: {
         marginRight: 60,
         gap: 4
     },
     previewItem: {
-        width: width - 10, height: (width) * 9 / 16, borderRadius: 10
+        width: width - 20, height: width * 9 / 16, borderRadius: 10,
     },
     controlItem: {
         width: 60, height: 40, borderRadius: 10, overflow: 'hidden', position: 'relative',
@@ -173,8 +197,8 @@ const styles = StyleSheet.create({
     addNew: {
         alignItems: 'center',
         justifyContent: 'center',
-        borderColor: Colors.light.borderColor,
-        borderWidth: 2,
+        borderColor: Colors.light.primary,
+        borderWidth: 1,
     },
     bottom: {
         paddingHorizontal: 15,

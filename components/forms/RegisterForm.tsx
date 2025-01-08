@@ -1,34 +1,37 @@
+import { FormContainer } from "@/components/forms/FormContainer"
 import { Button, Checkbox, Input, Typography } from "@/components/ui"
 import { Colors } from "@/constants/Colors"
 import { Link, useRouter } from "expo-router"
 import { useState } from "react"
+import { SubmitHandler, useForm } from "react-hook-form"
 import { StyleSheet, View } from "react-native"
 
 export const RegisterForm = () => {
     const router = useRouter()
-    const [formData, setFormData] = useState({
-        name: "",
-        tel: "",
-        password: "",
-        confirmPassword: "",
-        rulesConfirm: false
-    })
-    return <View style={[styles.container]}>
-        <Input value={formData.name} onChangeText={value => setFormData({ ...formData, name: value })} label="ФИО" placeholder="Ваше ФИО" />
-        <Input keyboardType="number-pad" value={formData.tel} onChangeText={value => setFormData({ ...formData, tel: value })} mask="+7 (999) 999 99 99" label="Номер телефона" placeholder="+7 (777) 322 32 32" />
-        <Input secureTextEntry value={formData.password} onChangeText={value => setFormData({ ...formData, password: value })} label="Пароль" placeholder="Создайте пароль" />
-        <Input secureTextEntry value={formData.confirmPassword} onChangeText={value => setFormData({ ...formData, confirmPassword: value })} label="Подтвердите пароль" placeholder="Подтвердите пароль" />
+    const { handleSubmit, formState: { errors }, control } = useForm()
+    const [rulesConfirm, setRulesConfirm] = useState(false)
+    const submit: SubmitHandler<any> = (data) => {
+        console.log(data)
+        // router.push(`/(auth)/confirmation?info=${JSON.stringify(data)}`)
+    }
+    return <FormContainer style={[styles.container]}>
+        <Input control={control} name="name" required={false} label="ФИО" input={{ placeholder: "Ваше ФИО" }} />
+        <Input name="tel" control={control} input={{
+            keyboardType: "number-pad", mask: "+7 (999) 999 99 99",
+            placeholder: "+7 (777) 322 32 32"
+        }} label="Номер телефона" />
+        <Input name="password" control={control} input={{ secureTextEntry: true, placeholder: "Создайте пароль" }} label="Пароль" />
+        <Input name="confirmPassword" control={control} input={{ secureTextEntry: true, placeholder: "Подтвердите пароль" }} label="Подтвердите пароль" />
+
         <View style={[styles.rulesContainer]}>
-            <Checkbox checked={formData.rulesConfirm} onCheck={() => setFormData({ ...formData, rulesConfirm: !formData.rulesConfirm })} />
-            <Typography variant="p2">
+            <Checkbox checked={rulesConfirm} onCheck={() => setRulesConfirm(!rulesConfirm)} />
+            <Typography variant="p2" style={[styles.rulesText]}>
                 Я прочитал(а) и согласен(на) с <Link style={[styles.link]} href={'/'}>Условиями использования</Link> и <Link style={[styles.link]} href={'/'}>Политикой конфиденциальности</Link>.
             </Typography>
         </View>
-        <Button onPress={() => {
-            router.push(`/(auth)/confirmation?info=${formData.tel}`)
-        }}  >Создать аккаунт</Button>
+        <Button onPress={handleSubmit(submit)}>Создать аккаунт</Button>
         <Typography style={{ marginTop: 10, textAlign: 'center' }} variant="span">Есть аккаунт? <Link style={[styles.link]} href={'/(auth)/login'}>Войти</Link></Typography>
-    </View>
+    </FormContainer >
 }
 const styles = StyleSheet.create({
     container: {
@@ -41,7 +44,10 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         gap: 12
     },
+    rulesText: {
+        width: '90%'
+    },
     link: {
         color: Colors.light.primary
-    }
+    },
 })

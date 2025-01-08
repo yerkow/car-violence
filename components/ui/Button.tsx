@@ -21,9 +21,9 @@ export const Button = ({ children, variant = 'primary', style, ...props }: Butto
     const handlePressOut = () => {
         scale.value = withSpring(1); // Returns to normal size
     };
-    return <Pressable onPressIn={handlePressIn} onPressOut={handlePressOut} style={[styles.container, props.disabled && styles.disabled, style as StyleProp<ViewStyle>, styles[variant]]} {...props}>
+    return <Pressable onPressIn={handlePressIn} onPressOut={handlePressOut} style={[styles.container, style as StyleProp<ViewStyle>, styles[variant], props.disabled && styles.disabled,]} {...props}>
         <Animated.View style={[animatedStyle]}>
-            <Typography variant="span" style={[styles[variant], styles.text]}>{children}</Typography>
+            <Typography variant="span" style={[styles[variant], styles.text, props.disabled && styles.disabled]}>{children}</Typography>
         </Animated.View>
     </Pressable>
 }
@@ -41,9 +41,10 @@ const styles = StyleSheet.create({
     text: {
         fontWeight: 'bold',
         borderWidth: 0,
+        backgroundColor: 'transparent'
     },
     disabled: {
-        opacity: .6
+        opacity: .8
     },
     primary: {
         backgroundColor: Colors.light.primary,

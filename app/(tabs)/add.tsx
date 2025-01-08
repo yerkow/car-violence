@@ -1,15 +1,27 @@
 import { Camera } from "@/components";
-import { Tabs } from "expo-router";
+import { Tabs, usePathname, useRouter } from "expo-router";
 
 import { SendViolenceForm } from "@/components/forms";
 import Constants from "expo-constants";
 import { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
+
 type ViewType = 'camera' | 'form'
 
 export default function Add() {
     const [medias, setMedias] = useState<string[]>([])
     const [view, setView] = useState<ViewType>('camera')
+    const router = useRouter()
+    const path = usePathname()
+    useEffect(() => {
+        if (path !== '/add') {
+            setView('form')
+        }
+        if (path == '/add' && medias.length === 0) {
+            setView('camera')
+        }
+    }, [path])
+
     const deleteMedia = (value: string) => {
 
         setMedias(prev => prev.filter(m => m !== value))
@@ -19,22 +31,33 @@ export default function Add() {
             setView('camera')
         }
     }, [medias])
+    console.log(medias)
+    const closeCameraOnEnd = () => {
+        setMedias(prev => {
+            if (prev.length === 0) {
+                router.push('/')
+            } else {
+                setView('form')
+            }
+            return prev
+        })
+    }
     return <View style={[styles.container]}>
         <Tabs.Screen options={{ headerShown: false }} />
         {view == 'camera' &&
-            <Camera setMedias={media => setMedias([...medias, ...media])} closeCameraOnEnd={() => setView('form')} />}
-        {view == 'form' && <View>
-            <SendViolenceForm setMedias={(value) => setMedias(value)} medias={medias} openCamera={() => setView('camera')} />
-        </View>}
+            <Camera setMedias={media => setMedias([...medias, ...media])} closeCameraOnEnd={closeCameraOnEnd} />}
+        {view == 'form' &&
+            <SendViolenceForm setMedias={(value) => setMedias(() => {
+                return value
+            })} medias={medias} openCamera={() => setView('camera')} />
+        }
     </View>
 }
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: 'rgba(0,0,0,.7)',
+        backgroundColor: 'rgba(0,0,0,.95)',
         paddingTop: Constants.statusBarHeight,
-        justifyContent: 'space-between',
-        height: '100%',
-        padding: 5
+        flex: 1
     }
 })

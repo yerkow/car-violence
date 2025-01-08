@@ -1,3 +1,4 @@
+import { customFetch } from "@/api"
 import { Button, ImageInput, Input } from "@/components/ui"
 import { Colors } from "@/constants/Colors"
 import { useRouter } from "expo-router"
@@ -13,7 +14,9 @@ export const EditProfileForm = () => {
     return <View style={[styles.container]}>
         <ImageInput label="Фото" value={formData.photo} setImage={(img) => setFormData({ ...formData, photo: img })} />
         <Input value={formData.name} onChangeText={value => setFormData({ ...formData, name: value })} label="ФИО" placeholder="Ваше ФИО" />
-        <Button>Сохранить</Button>
+        <Button onPress={() => {
+            customFetch({ method: "GET", path: "todos/1" })
+        }}>Сохранить</Button>
     </View>
 }
 const styles = StyleSheet.create({
