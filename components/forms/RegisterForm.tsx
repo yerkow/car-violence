@@ -1,27 +1,62 @@
+import { rConfirmCode } from "@/api/auth"
 import { FormContainer } from "@/components/forms/FormContainer"
 import { Button, Checkbox, Input, Typography } from "@/components/ui"
 import { Colors } from "@/constants/Colors"
+import { errorMsgs } from "@/consts"
+import { RegisterDTO } from "@/types"
+import { useMutation } from "@tanstack/react-query"
 import { Link, useRouter } from "expo-router"
 import { useState } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import { StyleSheet, View } from "react-native"
 
 export const RegisterForm = () => {
+    const { mutateAsync: sendCode } = useMutation({
+        mutationKey: ['sendConfirmCode'], mutationFn: (tel: string) => rConfirmCode({ tel }),
+        onError: (e) => {
+            console.log(e)
+        }
+    })
     const router = useRouter()
-    const { handleSubmit, formState: { errors }, control } = useForm()
+    const { handleSubmit, watch, formState: { errors }, control } = useForm<RegisterDTO & { confirmPassword: string }>({ mode: "onChange" })
     const [rulesConfirm, setRulesConfirm] = useState(false)
+    const password = watch('password', '')
     const submit: SubmitHandler<any> = (data) => {
         console.log(data)
-        // router.push(`/(auth)/confirmation?info=${JSON.stringify(data)}`)
+        sendCode(data.tel).then(() => {
+            router.push(`/(auth)/confirmation?info=${JSON.stringify(data)}`)
+        })
     }
+    const isDisabled = Object.keys(errors).length !== 0 || !rulesConfirm;
     return <FormContainer style={[styles.container]}>
         <Input control={control} name="name" required={false} label="ФИО" input={{ placeholder: "Ваше ФИО" }} />
         <Input name="tel" control={control} input={{
             keyboardType: "number-pad", mask: "+7 (999) 999 99 99",
             placeholder: "+7 (777) 322 32 32"
-        }} label="Номер телефона" />
-        <Input name="password" control={control} input={{ secureTextEntry: true, placeholder: "Создайте пароль" }} label="Пароль" />
-        <Input name="confirmPassword" control={control} input={{ secureTextEntry: true, placeholder: "Подтвердите пароль" }} label="Подтвердите пароль" />
+        }} label="Номер телефона" rules={{ required: "Hello" }} error={errors?.tel?.message} />
+        <Input name="password" control={control} input={{ secureTextEntry: true, placeholder: "Создайте пароль" }} label="Пароль"
+            rules={{
+                required: "Hello",
+                validate: {
+                    hasNumber: (value) =>
+                        /\d/.test(value) || errorMsgs.register.hasNumber,
+                    hasUpperCase: (value) =>
+                        /[A-Z]/.test(value) ||
+                        errorMsgs.register.hasUpperCase,
+                    hasMinimumLength: (value) =>
+                        value.length >= 8 ||
+                        errorMsgs.register.hasMinimumLength
+                },
+            }}
+            error={errors.password?.message}
+        />
+        <Input rules={{
+            required: "HEllo",
+            validate: {
+                isEqual: (value) => value == password || errorMsgs.register.passwordsDoNotMatch
+
+            }
+        }} error={errors.confirmPassword?.message} name="confirmPassword" control={control} input={{ secureTextEntry: true, placeholder: "Подтвердите пароль" }} label="Подтвердите пароль" />
 
         <View style={[styles.rulesContainer]}>
             <Checkbox checked={rulesConfirm} onCheck={() => setRulesConfirm(!rulesConfirm)} />
@@ -29,7 +64,7 @@ export const RegisterForm = () => {
                 Я прочитал(а) и согласен(на) с <Link style={[styles.link]} href={'/'}>Условиями использования</Link> и <Link style={[styles.link]} href={'/'}>Политикой конфиденциальности</Link>.
             </Typography>
         </View>
-        <Button onPress={handleSubmit(submit)}>Создать аккаунт</Button>
+        <Button disabled={isDisabled} onPress={handleSubmit(submit)}>Создать аккаунт</Button>
         <Typography style={{ marginTop: 10, textAlign: 'center' }} variant="span">Есть аккаунт? <Link style={[styles.link]} href={'/(auth)/login'}>Войти</Link></Typography>
     </FormContainer >
 }

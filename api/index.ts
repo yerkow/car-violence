@@ -15,7 +15,7 @@ interface customFetchProps {
 }
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 export const customFetch = async <T>({ path, method, query, data }: customFetchProps): Promise<T | undefined> => {
-    let url = new URL(`/${path}`, BASE_URL)
+    let url = new URL(`/api/v1/${path}`, BASE_URL)
     if (query) {
         Object.keys(query).forEach(key => {
             url.searchParams.append(key, query[key])
@@ -31,9 +31,10 @@ export const customFetch = async <T>({ path, method, query, data }: customFetchP
         fetchBody = JSON.stringify(data)
     }
     try {
+
         const response = await fetch(url, { method, headers, body: fetchBody })
         if (!response.ok) {
-            throw new Error(`Fetch failed, STATUS:${response.status}`)
+            throw new Error(`Fetch failed, STATUS:${response.status}, route:${url}`)
         }
         const data = await response.json()
         return data

@@ -15,24 +15,39 @@ interface InputProps {
     control: Control<any, any>
     input: Partial<MaskedTextInputProps>
     rules?: Omit<RegisterOptions<any, string>, "valueAsNumber" | "valueAsDate" | "setValueAs" | "disabled"> | undefined
+    error?: string;
 
 }
-export const Input = ({ rules, name, control, required = true, label, input: { secureTextEntry, onChangeText, ...inputProps } }: InputProps) => {
+const getBorderStyle = (focused: boolean, error: boolean): "borderNormal" | "borderFocused" | "borderError" => {
+    if (focused && !error) {
+        return 'borderFocused'
+    }
+    if (error) {
+        return "borderError"
+    }
+    return 'borderNormal'
+}
+export const Input = ({ error, rules, name, control, required = true, label, input: { secureTextEntry, onChangeText, ...inputProps } }: InputProps) => {
     const [focused, setFocused] = useState(false)
     const [secure, setSecure] = useState(secureTextEntry)
     return <Controller name={name} control={control} render={({ field: { onChange, value, onBlur } }) => {
         return <View style={[styles.container]}>
-            <Typography variant="span">{label}
-                {required && <Typography color="red" variant="span"> *</Typography>}
-            </Typography>
-            <MaskedTextInput onChangeText={(_, value) => onChange(value)} secureTextEntry={secure} placeholderTextColor={Colors.light.borderColor} onFocus={() => setFocused(true)} onBlur={() => {
-                setFocused(false)
-                onBlur()
-            }} style={[styles.input, styles.base, focused && styles.focused]} {...inputProps} />
-            {secureTextEntry &&
-                <Pressable style={[styles.secureToggle]} onPress={() => setSecure(!secure)}>
-                    <Feather size={20} name={secure ? "eye-off" : "eye"} />
-                </Pressable>}
+            <View style={[styles.label]}>
+                <Typography color={error ? 'red' : ""} variant="span">{label}
+                    {required && <Typography color="red" variant="span"> *</Typography>}
+                </Typography>
+            </View>
+            <View style={[styles.inputContainer, styles.border, styles[getBorderStyle(focused, !!error)]]}>
+                <MaskedTextInput onChangeText={(_, value) => onChange(value)} secureTextEntry={secure} placeholderTextColor={Colors.light.borderColor} onFocus={() => setFocused(true)} onBlur={() => {
+                    setFocused(false)
+                    onBlur()
+                }} style={[styles.input, styles.base]} {...inputProps} />
+                {secureTextEntry &&
+                    <Pressable style={[styles.secureToggle]} onPress={() => setSecure(!secure)}>
+                        <Feather size={20} name={secure ? "eye-off" : "eye"} />
+                    </Pressable>}
+            </View>
+            {error && <Typography color="red" variant="span">{error}</Typography>}
         </View>
     }} rules={rules} />
 }
@@ -44,12 +59,13 @@ const styles = StyleSheet.create({
         gap: rS(7)
     },
     base: {
-        borderColor: Colors.light.borderColor,
         backgroundColor: Colors.light.background,
-        borderWidth: 1,
         paddingHorizontal: rS(16),
         borderRadius: 12,
         fontSize: rS(14)
+    },
+    label: {
+        flexDirection: 'row',
     },
     textarea: {
         height: rV(72),
@@ -57,14 +73,31 @@ const styles = StyleSheet.create({
     input: {
         height: rV(42),
     },
-    focused: {
-        borderWidth: 2,
+    inputContainer: {
+        position: 'relative',
+        width: '100%'
+    },
+    border: {
+        borderWidth: 1,
+        borderRadius: 12,
+    },
+    borderNormal: {
+        borderColor: Colors.light.borderColor,
+    },
+    borderError: {
+        borderColor: 'red',
+    },
+    borderFocused: {
         borderColor: Colors.light.primary,
     },
     secureToggle: {
         position: "absolute",
-        right: rS(15),
-        bottom: rS(15),
+        bottom: 0,
+        right: 0,
+        left: '85%',
+        alignItems: 'center',
+        justifyContent: 'center',
+        top: 0,
         zIndex: 20
     },
 })

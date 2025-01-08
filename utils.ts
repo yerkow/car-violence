@@ -53,3 +53,16 @@ export const rV = (value: number) => {
 export const rMS = (value: number, factor?: number) => {
     return moderateScale(value, factor)
 }
+
+export function formatPhoneNumber(phone: string) {
+    // Ensure the input is a string
+    const cleaned = phone.toString().replace(/\D/g, ''); // Remove non-numeric characters
+
+    // Check if the phone number has the correct length
+    if (cleaned.length !== 11 || !cleaned.startsWith('7')) {
+        throw new Error('Invalid phone number format');
+    }
+
+    // Format the phone number
+    return `+7 (${cleaned.slice(1, 4)}) ${cleaned.slice(4, 7)} ${cleaned.slice(7, 9)} ${cleaned.slice(9, 11)}`;
+}
