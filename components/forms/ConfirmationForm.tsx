@@ -35,6 +35,7 @@ export const ConfirmationForm = ({ userData }: ConfirmationFormProps) => {
             router.push('/(auth)/login')
         },
         onError: (e) => {
+            showToast({ type: 'error', title: "Ошибка", desc: "Неверный код" })
             console.log(e)
         }
     })
@@ -63,7 +64,7 @@ export const ConfirmationForm = ({ userData }: ConfirmationFormProps) => {
             )}
         />
         <AskCodeAgain tel={userData.tel} />
-        <Button onPress={submit}>Продолжить</Button>
+        <Button disabled={isPending} loading={isPending} onPress={submit}>Продолжить</Button>
     </View>
 }
 const AskCodeAgain = ({ tel }: { tel: string }) => {

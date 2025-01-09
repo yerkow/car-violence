@@ -11,6 +11,9 @@ export const rVerifyCode = (data: {
 }) => {
     return customFetch({ method: "POST", path: 'verify-code/', data })
 }
-export const rLogin = (data: { phone_number: string, password: string }): Promise<{ access: string } | undefined> => {
+export const rLogin = (data: { phone_number: string, password: string }): Promise<{ access: string, refresh: string } | undefined> => {
     return customFetch({ method: "POST", path: 'login/', data })
+}
+export const rCheckToken = () => {
+    return customFetch({ method: "GET", path: 'check-token', withAuth: true })
 }

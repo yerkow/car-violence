@@ -14,9 +14,11 @@ export const LoginForm = () => {
     const router = useRouter()
     const { mutate: login, isPending } = useMutation({
         mutationKey: ['login'], mutationFn: rLogin,
-        onSuccess: async (data?: { access: string }) => {
+        onSuccess: async (data?: { access: string, refresh: string }) => {
             if (data) {
-                await saveToStorage('token', data.access)
+                console.log(data)
+                await saveToStorage('access', data.access)
+                await saveToStorage('refresh', data.access)
                 router.push('/')
             }
             console.log(data)
