@@ -44,6 +44,7 @@ export const GetDate = (date: Date) => {
     const result = `${day}.${month}.${year}`;
     return result
 }
+
 export const rS = (value: number) => {
     return scale(value)
 }
@@ -66,3 +67,45 @@ export function formatPhoneNumber(phone: string) {
     // Format the phone number
     return `+7 (${cleaned.slice(1, 4)}) ${cleaned.slice(4, 7)} ${cleaned.slice(7, 9)} ${cleaned.slice(9, 11)}`;
 }
+
+type FileDetails = {
+    fileName: string;
+    mimeType: string;
+};
+
+export const getFileDetails = (fileUri: string): FileDetails | null => {
+    if (!fileUri) {
+        return null;
+    }
+
+    // Extract the file name from the URI
+    const fileName = fileUri.split('/').pop();
+    if (!fileName) {
+        return null;
+    }
+
+    // Get the file extension
+    const extension = fileName.split('.').pop()?.toLowerCase();
+    if (!extension) {
+        return null;
+    }
+
+    // Map of common file extensions to MIME types
+    const mimeTypes: Record<string, string> = {
+        jpg: 'image/jpeg',
+        jpeg: 'image/jpeg',
+        png: 'image/png',
+        gif: 'image/gif',
+        mp4: 'video/mp4',
+        mov: 'video/quicktime',
+        webp: 'image/webp',
+    };
+
+    // Get the MIME type based on the extension
+    const mimeType = mimeTypes[extension] || 'application/octet-stream'; // Default to binary data
+
+    return {
+        fileName,
+        mimeType,
+    };
+};

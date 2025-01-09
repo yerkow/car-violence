@@ -35,7 +35,6 @@ function RootLayout() {
     });
     const ref = useNavigationContainerRef();
     useEffect(() => {
-        Sentry.captureException(new Error("Test error from Expo!"));
         if (ref?.current) {
             navigationIntegration.registerNavigationContainer(ref);
         }

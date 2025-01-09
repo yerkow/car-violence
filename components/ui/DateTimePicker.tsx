@@ -36,6 +36,7 @@ export const DateTimePicker = ({ dateValue, timeValue, setValue, label, bg = 'li
     const showTimepicker = () => {
         showMode('time');
     };
+    console.log(dateValue, timeValue)
     return <View style={[styles.container]}>
         <Typography color={bg == 'dark' ? Colors.light.background : Colors.light.text} variant="span">{label}</Typography>
         <View style={[styles.field]}>
@@ -57,10 +58,11 @@ export const DateTimePicker = ({ dateValue, timeValue, setValue, label, bg = 'li
                     onChange={onChange}
                 />
 
-            </View> : <><View style={[styles.values]}>
-                <Typography color={Colors.light.notSelected} variant="p2">{GetDate(dateValue)} ,</Typography>
-                <Typography color={Colors.light.notSelected} variant="p2">{GetTime(timeValue)}</Typography>
-            </View>
+            </View> : <>
+                <View style={[styles.values]}>
+                    <Typography color={Colors.light.notSelected} variant="p2">{GetDate(dateValue)} ,</Typography>
+                    <Typography color={Colors.light.notSelected} variant="p2">{GetTime(timeValue)}</Typography>
+                </View>
                 <View style={[styles.actionsWrapper]}>
                     <Pressable onPress={showDatepicker} style={[styles.action]}><Entypo size={22} name="calendar" color={Colors.light.background} />
                         {show && mode == 'date' &&

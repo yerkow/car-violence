@@ -1,10 +1,14 @@
+import { rSendViolence } from "@/api/violence"
 import { FormContainer } from "@/components/forms/FormContainer"
 import { Button, DateTimePicker, Input, Select, Typography } from "@/components/ui"
 import { Video } from "@/components/Video"
 import { Colors } from "@/constants/Colors"
+import { getFileDetails } from "@/utils"
 import { Entypo, MaterialIcons } from "@expo/vector-icons"
+import { useMutation } from "@tanstack/react-query"
 import { Link } from "expo-router"
 import { useCallback, useRef, useState } from "react"
+import { Controller, useForm } from "react-hook-form"
 import { Dimensions, FlatList, Image, Keyboard, Pressable, StyleSheet, TouchableOpacity, View, ViewProps, ViewToken } from "react-native"
 
 interface SendViolenceFormProps extends ViewProps {
@@ -13,29 +17,60 @@ interface SendViolenceFormProps extends ViewProps {
     openCamera: () => void
 }
 const width = Dimensions.get('window').width
-
-export const SendViolenceForm = ({ medias, openCamera, setMedias, style, ...props }: SendViolenceFormProps) => {
-    const [formData, setFormData] = useState({
-        city: "",
-        street: "",
+const defaultValues = {
+    city: "Hello",
+    street: "",
+    dateTime: {
         date: new Date(),
         time: new Date(),
-        violence: "",
+    },
+    description: ""
+}
+export const SendViolenceForm = ({ medias, openCamera, setMedias, style, ...props }: SendViolenceFormProps) => {
+    const { control, formState: { errors }, handleSubmit } = useForm({
+        defaultValues
     })
-    const onChange = (key: string, value: string | Date) => {
-        setFormData({ ...formData, [key]: value })
+    const { mutate: send } = useMutation({
+        mutationKey: ['sendViolence'], mutationFn: rSendViolence, onSuccess: (data) => {
+            console.log(data)
+        }
+    })
+    const submit = (data: typeof defaultValues) => {
+        const body = new FormData()
+        medias.forEach(media => {
+            const details = getFileDetails(media)
+            body.append('video_file', {
+                uri: media,
+                name: details?.fileName,
+                type: details?.mimeType
+            } as any)
+        })
+        body.append('city', data.city)
+        body.append('street', data.street)
+        body.append('description', data.description)
+        body.append('was_at_date', data.dateTime.date.toISOString())
+        body.append('was_at_time', data.dateTime.time.toISOString())
+        send(body)
+        console.log(data)
     }
     return <FormContainer style={[style, styles.container]} {...props}>
         <MediasView medias={medias} setMedias={setMedias} openCamera={openCamera} />
         <TouchableOpacity activeOpacity={1} onPress={() => Keyboard.dismiss()}>
             <View style={[styles.form]}>
                 <Input
-                    multiline numberOfLines={3} bg="dark" placeholder="Опишите нарушение" value={formData.violence} onChangeText={(_, value) => onChange('violence', value)} label="Описание" />
-                <Select label="Город" items={['Hello', 'World']} value={formData.city} onSelect={(value) => onChange('city', value)} placeholder="Выберите город" />
-                <Input bg="dark" placeholder="Укажите улицу" value={formData.street} onChangeText={(_, value) => onChange('street', value)} label="Улица" />
-                <DateTimePicker dateValue={formData.date} timeValue={formData.time} setValue={(key, value) => onChange(key, value)} bg="dark" label="Дата и время" />
+                    control={control}
+                    input={{ multiline: true, numberOfLines: 3, placeholder: "Опишите нарушение" }} bg="dark" name="description" label="Описание" />
+                <Controller control={control} name="city" render={({ field: { onChange, value, onBlur } }) =>
+                    <Select label="Город" items={['Hello', 'World']} value={value} onSelect={(value) => onChange(value)} placeholder="Выберите город" />
+                } />
+                <Input bg="dark" name="street" control={control} input={{ placeholder: "Укажите улицу" }} label="Улица" />
+
+                <Controller control={control} name="dateTime" render={({ field: { onChange, value, onBlur } }) => <DateTimePicker dateValue={value.date} timeValue={value.time} setValue={(key, newValue) => {
+                    const updated = { ...value, [key]: newValue }
+                    onChange(updated)
+                }} bg="dark" label="Дата и время" />} />
                 <Link href={'/'}><Typography color={Colors.light.primary} variant="span">Правила размещения фото/видео</Typography></Link>
-                <Button variant="primary">Отправить</Button>
+                <Button variant="primary" onPress={handleSubmit(submit)}>Отправить</Button>
             </View>
         </TouchableOpacity>
     </FormContainer>

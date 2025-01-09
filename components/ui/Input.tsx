@@ -27,17 +27,17 @@ const getBorderStyle = (focused: boolean, error: boolean): "borderNormal" | "bor
     }
     return 'borderNormal'
 }
-export const Input = ({ error, rules, name, control, required = true, label, input: { secureTextEntry, onChangeText, ...inputProps } }: InputProps) => {
+export const Input = ({ bg, error, rules, name, control, required = true, label, input: { secureTextEntry, onChangeText, ...inputProps } }: InputProps) => {
     const [focused, setFocused] = useState(false)
     const [secure, setSecure] = useState(secureTextEntry)
     return <Controller name={name} control={control} render={({ field: { onChange, value, onBlur } }) => {
         return <View style={[styles.container]}>
             <View style={[styles.label]}>
-                <Typography color={error ? 'red' : ""} variant="span">{label}
+                <Typography color={error ? 'red' : bg == 'dark' ? "white" : 'black'} variant="span">{label}
                     {required && <Typography color="red" variant="span"> *</Typography>}
                 </Typography>
             </View>
-            <View style={[styles.inputContainer, styles.border, styles[getBorderStyle(focused, !!error)]]}>
+            <View style={[styles.inputContainer, styles.border, styles[getBorderStyle(focused, !!error)], inputProps.multiline && { height: 90 }]}>
                 <MaskedTextInput onChangeText={(_, value) => onChange(value)} secureTextEntry={secure} placeholderTextColor={Colors.light.borderColor} onFocus={() => setFocused(true)} onBlur={() => {
                     setFocused(false)
                     onBlur()
@@ -71,11 +71,12 @@ const styles = StyleSheet.create({
         height: rV(72),
     },
     input: {
-        height: rV(42),
+        height: '100%'
     },
     inputContainer: {
         position: 'relative',
-        width: '100%'
+        width: '100%',
+        height: rV(42),
     },
     border: {
         borderWidth: 1,

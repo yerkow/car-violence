@@ -34,7 +34,7 @@ export const customFetch = async <T>({ path, method, query, data }: customFetchP
 
         const response = await fetch(url, { method, headers, body: fetchBody })
         if (!response.ok) {
-            throw new Error(`Fetch failed, STATUS:${response.status}, route:${url}`)
+            throw new Error(`Fetch failed, STATUS/MSG:${response.status}${response.statusText}, route:${url}`)
         }
         const data = await response.json()
         return data
