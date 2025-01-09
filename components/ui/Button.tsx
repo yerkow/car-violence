@@ -1,13 +1,14 @@
 import { Typography } from "@/components/ui/Typography";
 import { Colors } from "@/constants/Colors";
 import { ReactNode } from "react";
-import { Pressable, PressableProps, StyleProp, StyleSheet, ViewStyle } from "react-native";
+import { ActivityIndicator, Pressable, PressableProps, StyleProp, StyleSheet, ViewStyle } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 interface ButtonProps extends PressableProps {
     variant?: 'primary' | 'outline',
     children: ReactNode
+    loading?: boolean;
 }
-export const Button = ({ children, variant = 'primary', style, ...props }: ButtonProps) => {
+export const Button = ({ loading, children, variant = 'primary', style, ...props }: ButtonProps) => {
     const scale = useSharedValue(1); // Shared value for scaling
 
     // Animated style
@@ -22,9 +23,10 @@ export const Button = ({ children, variant = 'primary', style, ...props }: Butto
         scale.value = withSpring(1); // Returns to normal size
     };
     return <Pressable onPressIn={handlePressIn} onPressOut={handlePressOut} style={[styles.container, style as StyleProp<ViewStyle>, styles[variant], props.disabled && styles.disabled,]} {...props}>
-        <Animated.View style={[animatedStyle]}>
-            <Typography variant="span" style={[styles[variant], styles.text, props.disabled && styles.disabled]}>{children}</Typography>
-        </Animated.View>
+        {loading ? <ActivityIndicator size={'large'} color={variant == 'primary' ? 'white' : Colors.light.primary} /> :
+            <Animated.View style={[animatedStyle]}>
+                <Typography variant="span" style={[styles[variant], styles.text, props.disabled && styles.disabled]}>{children}</Typography>
+            </Animated.View>}
     </Pressable>
 }
 

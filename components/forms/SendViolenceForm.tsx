@@ -3,14 +3,51 @@ import { FormContainer } from "@/components/forms/FormContainer"
 import { Button, DateTimePicker, Input, Select, Typography } from "@/components/ui"
 import { Video } from "@/components/Video"
 import { Colors } from "@/constants/Colors"
-import { getFileDetails } from "@/utils"
+import { errorMsgs } from "@/consts"
+import { GetDate, getFileDetails, GetTime, showToast } from "@/utils"
 import { Entypo, MaterialIcons } from "@expo/vector-icons"
 import { useMutation } from "@tanstack/react-query"
 import { Link } from "expo-router"
-import { useCallback, useRef, useState } from "react"
+import React, { useCallback, useRef, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
 import { Dimensions, FlatList, Image, Keyboard, Pressable, StyleSheet, TouchableOpacity, View, ViewProps, ViewToken } from "react-native"
 
+const kazakhstanCities = [
+    "Алматы",
+    "Нур-Султан",
+    "Шымкент",
+    "Караганда",
+    "Актобе",
+    "Тараз",
+    "Павлодар",
+    "Усть-Каменогорск",
+    "Семей",
+    "Костанай",
+    "Атырау",
+    "Кызылорда",
+    "Петропавловск",
+    "Уральск",
+    "Темиртау",
+    "Актау",
+    "Туркестан",
+    "Экибастуз",
+    "Рудный",
+    "Жезказган",
+    "Балхаш",
+    "Кентау",
+    "Талдыкорган",
+    "Кокшетау",
+    "Сатпаев",
+    "Каскелен",
+    "Кульсары",
+    "Риддер",
+    "Шахтинск",
+    "Абай",
+    "Степногорск",
+    "Каратау",
+    "Жанаозен",
+    "Аркалык"
+];
 interface SendViolenceFormProps extends ViewProps {
     medias: string[]
     setMedias: (value: string[]) => void;
@@ -18,7 +55,7 @@ interface SendViolenceFormProps extends ViewProps {
 }
 const width = Dimensions.get('window').width
 const defaultValues = {
-    city: "Hello",
+    city: kazakhstanCities[0],
     street: "",
     dateTime: {
         date: new Date(),
@@ -30,9 +67,13 @@ export const SendViolenceForm = ({ medias, openCamera, setMedias, style, ...prop
     const { control, formState: { errors }, handleSubmit } = useForm({
         defaultValues
     })
-    const { mutate: send } = useMutation({
+    const { mutate: send, isPending } = useMutation({
         mutationKey: ['sendViolence'], mutationFn: rSendViolence, onSuccess: (data) => {
             console.log(data)
+            showToast({ type: 'success', title: "Отправлено", desc: "Нарушение было отправлено!" })
+        }, onError: (e) => {
+            showToast({ type: 'error', title: "Ошибка", desc: "Произошла ошибка" })
+            console.log(e)
         }
     })
     const submit = (data: typeof defaultValues) => {
@@ -48,29 +89,36 @@ export const SendViolenceForm = ({ medias, openCamera, setMedias, style, ...prop
         body.append('city', data.city)
         body.append('street', data.street)
         body.append('description', data.description)
-        body.append('was_at_date', data.dateTime.date.toISOString())
-        body.append('was_at_time', data.dateTime.time.toISOString())
+        body.append('was_at_date', GetDate(data.dateTime.date))
+        body.append('was_at_time', GetTime(data.dateTime.time) + ":00")
+        console.log(body)
         send(body)
-        console.log(data)
     }
     return <FormContainer style={[style, styles.container]} {...props}>
         <MediasView medias={medias} setMedias={setMedias} openCamera={openCamera} />
         <TouchableOpacity activeOpacity={1} onPress={() => Keyboard.dismiss()}>
             <View style={[styles.form]}>
                 <Input
+                    rules={{ required: errorMsgs.required }}
+                    error={errors.description?.message}
                     control={control}
                     input={{ multiline: true, numberOfLines: 3, placeholder: "Опишите нарушение" }} bg="dark" name="description" label="Описание" />
-                <Controller control={control} name="city" render={({ field: { onChange, value, onBlur } }) =>
-                    <Select label="Город" items={['Hello', 'World']} value={value} onSelect={(value) => onChange(value)} placeholder="Выберите город" />
-                } />
-                <Input bg="dark" name="street" control={control} input={{ placeholder: "Укажите улицу" }} label="Улица" />
-
+                <Controller
+                    rules={{ required: errorMsgs.required }}
+                    control={control} name="city" render={({ field: { onChange, value, onBlur } }) =>
+                        <Select
+                            error={errors.city?.message}
+                            withSearch label="Город" items={kazakhstanCities} value={value} onSelect={(value) => onChange(value)} placeholder="Выберите город" />
+                    } />
+                <Input rules={{ required: errorMsgs.required }}
+                    error={errors.street?.message}
+                    bg="dark" name="street" control={control} input={{ placeholder: "Укажите улицу" }} label="Улица" />
                 <Controller control={control} name="dateTime" render={({ field: { onChange, value, onBlur } }) => <DateTimePicker dateValue={value.date} timeValue={value.time} setValue={(key, newValue) => {
                     const updated = { ...value, [key]: newValue }
                     onChange(updated)
                 }} bg="dark" label="Дата и время" />} />
                 <Link href={'/'}><Typography color={Colors.light.primary} variant="span">Правила размещения фото/видео</Typography></Link>
-                <Button variant="primary" onPress={handleSubmit(submit)}>Отправить</Button>
+                <Button disabled={isPending} loading={isPending} variant="primary" onPress={handleSubmit(submit)}>Отправить</Button>
             </View>
         </TouchableOpacity>
     </FormContainer>

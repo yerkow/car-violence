@@ -1,8 +1,10 @@
 import { Typography } from "@/components/ui/Typography";
 import { Colors } from "@/constants/Colors";
-import { Entypo } from "@expo/vector-icons";
+import useDebounce from "@/hooks/useDebounce";
+import { rS, rV } from "@/utils";
+import { Entypo, FontAwesome5 } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
-import { Pressable, StyleSheet, View, ViewProps } from "react-native";
+import { Pressable, StyleSheet, TextInput, View, ViewProps } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
 interface SelectProps extends ViewProps {
     items: string[];
@@ -10,9 +12,23 @@ interface SelectProps extends ViewProps {
     label: string;
     onSelect: (value: string) => void
     placeholder?: string;
+    required?: boolean
+    withSearch?: boolean
+    error?: string
 }
-export const Select = ({ label, value, placeholder, onSelect, items, style, ...props }: SelectProps) => {
+export const Select = ({ error, withSearch, required = true, label, value, placeholder, onSelect, items, style, ...props }: SelectProps) => {
     const [show, setShow] = useState(false)
+    const [searchItems, setSearchItems] = useState(items)
+    const [searchTerm, setSearchTerm] = useState('')
+    const debouncedQuery = useDebounce(searchTerm, 500); // 500ms debounce
+
+    useEffect(() => {
+        if (debouncedQuery) {
+            setSearchItems(prev => prev.filter(v => v.toLowerCase().includes(debouncedQuery.toLowerCase())))
+        } else {
+            setSearchItems(items)
+        }
+    }, [debouncedQuery]);
     const dropdownHeight = items.length * 40
     const h = useSharedValue(0)
     const rotate = useSharedValue('0deg')
@@ -20,7 +36,9 @@ export const Select = ({ label, value, placeholder, onSelect, items, style, ...p
     const padding = useSharedValue(0)
 
     const animatedStyle = useAnimatedStyle(() => {
-        return { height: h.value, }
+        return {
+            height: h.value,
+        }
     })
     const innerStyle = useAnimatedStyle(() => ({ opacity: opacity.value }))
     const iconStyle = useAnimatedStyle(() => {
@@ -28,7 +46,7 @@ export const Select = ({ label, value, placeholder, onSelect, items, style, ...p
     })
     useEffect(() => {
         if (show) {
-            h.value = withSpring(dropdownHeight, { damping: 15 })
+            h.value = withSpring(dropdownHeight < 300 ? dropdownHeight : 300, { damping: 15 })
             padding.value = withSpring(10, { damping: 15 })
             opacity.value = withTiming(1, { duration: 100 })
             rotate.value = withSpring('90deg', { damping: 20 })
@@ -45,27 +63,49 @@ export const Select = ({ label, value, placeholder, onSelect, items, style, ...p
 
     }
     return <View style={[styles.container]}>
-        <Typography color={Colors.light.background} variant="span">{label}</Typography>
+        <Typography color={Colors.light.background} variant="span">{label}{required && <Typography color="red" variant="span"> *</Typography>}
+        </Typography>
         <Pressable onPress={toggle} style={[styles.label]}>
             <Typography color={value ? Colors.light.primary : Colors.light.borderColor} variant="span">{value ? value : placeholder}</Typography>
             <Animated.View style={[iconStyle]} ><Entypo color={Colors.light.primary} name="chevron-right" size={28} /></Animated.View>
         </Pressable>
         <Animated.View style={[animatedStyle, styles.content]}>
-            <Animated.View style={[innerStyle]}>
-                {items.map((item, idx) => <Pressable style={[idx == items.length - 1 ? { borderBottomWidth: 0 } : { borderBottomWidth: 1 }, styles.item]} onPress={() => {
+            <Animated.ScrollView contentContainerStyle={[innerStyle]}>
+                {withSearch &&
+                    <View style={[styles.search]}>
+                        <TextInput style={[styles.searchInput]} value={searchTerm} onChangeText={value => setSearchTerm(value)} />
+                        <FontAwesome5 style={[styles.searchIcon]} name="search" size={20} color={Colors.light.primary} />
+                    </View>}
+                {searchItems.length > 0 ? searchItems.map((item, idx) => <Pressable style={[{ borderBottomWidth: idx == items.length - 1 ? 0 : 1 }, styles.item]} onPress={() => {
                     onSelect(item);
                     toggle()
                 }} key={idx}>
                     <Typography variant="p2">{item}</Typography>
-                </Pressable>)}
-            </Animated.View>
+                </Pressable>) : <Typography center variant="p2">Нет результатов</Typography>}
+            </Animated.ScrollView>
         </Animated.View>
+        {error && <Typography variant="span" color="red">{error}</Typography>}
     </View>
 }
 const styles = StyleSheet.create({
     container: {
         gap: 7,
     },
+    search: {
+        position: 'relative',
+        margin: rS(8),
+        marginBottom: rS(15)
+
+    },
+    searchInput: {
+        fontSize: rS(14),
+        height: rV(38),
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: Colors.light.borderColor,
+        paddingLeft: rS(30),
+    },
+    searchIcon: { position: 'absolute', left: 10, top: 14 },
     label: {
         height: 48,
         borderColor: Colors.light.borderColor,
@@ -82,10 +122,12 @@ const styles = StyleSheet.create({
     content: {
         borderRadius: 10,
         zIndex: 20,
+        maxHeight: 200,
         position: 'absolute',
-        left: 10, right: 10,
+        left: 10,
+        right: 10,
         top: 75,
-        backgroundColor: Colors.light.background,
+        backgroundColor: '#ededed',
         overflow: 'hidden',
     },
     item: {

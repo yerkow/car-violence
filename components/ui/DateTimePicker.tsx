@@ -11,8 +11,9 @@ interface DateTimePickerProps extends ViewProps {
     setValue: (key: 'date' | 'time', value: Date) => void
     label: string
     bg?: 'light' | 'dark'
+    required?: boolean
 }
-export const DateTimePicker = ({ dateValue, timeValue, setValue, label, bg = 'light', style, ...props }: DateTimePickerProps) => {
+export const DateTimePicker = ({ required = true, dateValue, timeValue, setValue, label, bg = 'light', style, ...props }: DateTimePickerProps) => {
     const [mode, setMode] = useState<'date' | 'time'>('date');
     const [show, setShow] = useState(false);
 
@@ -38,7 +39,9 @@ export const DateTimePicker = ({ dateValue, timeValue, setValue, label, bg = 'li
     };
     console.log(dateValue, timeValue)
     return <View style={[styles.container]}>
-        <Typography color={bg == 'dark' ? Colors.light.background : Colors.light.text} variant="span">{label}</Typography>
+        <Typography color={bg == 'dark' ? Colors.light.background : Colors.light.text} variant="span">{label}
+            {required && <Typography color="red" variant="span"> *</Typography>}
+        </Typography>
         <View style={[styles.field]}>
             {Platform.OS == 'ios' ? <View
                 style={[styles.IOSpicker]}>
@@ -99,7 +102,7 @@ const styles = StyleSheet.create({
     field: {
         height: 48,
         borderColor: Colors.light.borderColor,
-        backgroundColor: Platform.OS == 'ios' ? "rgba(0,0,0,.6)" : Colors.light.background,
+        backgroundColor: Platform.OS == 'ios' ? "white" : Colors.light.background,
         borderWidth: 1,
         paddingHorizontal: 16,
         borderRadius: 12,

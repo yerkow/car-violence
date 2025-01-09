@@ -1,5 +1,6 @@
 import * as ImagePicker from 'expo-image-picker';
 import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
+import Toast, { ToastType } from 'react-native-toast-message';
 export const pickImage = async (saveSelected: (value: string[]) => void) => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -41,7 +42,7 @@ export const GetDate = (date: Date) => {
     const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Month is zero-indexed (0 = January, 11 = December)
     const year = date.getFullYear();
 
-    const result = `${day}.${month}.${year}`;
+    const result = `${year}-${month}-${day}`;
     return result
 }
 
@@ -109,3 +110,10 @@ export const getFileDetails = (fileUri: string): FileDetails | null => {
         mimeType,
     };
 };
+export const showToast = ({ type, title, desc }: { type: ToastType, title: string, desc: string }) => {
+    Toast.show({
+        type,
+        text1: title,
+        text2: desc
+    });
+}

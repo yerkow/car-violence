@@ -74,6 +74,7 @@ const styles = StyleSheet.create({
         height: '100%'
     },
     inputContainer: {
+        backgroundColor: Colors.light.background,
         position: 'relative',
         width: '100%',
         height: rV(42),
