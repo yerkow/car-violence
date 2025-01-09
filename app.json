@@ -66,6 +66,13 @@
                     "project": "oko-app",
                     "url": "https://bedroom-developers.sentry.io/"
                 }
+            ],
+            [
+                "expo-secure-store",
+                {
+                    "configureAndroidBackup": true,
+                    "faceIDPermission": "Allow $(PRODUCT_NAME) to access your Face ID biometric data."
+                }
             ]
         ],
         "experiments": {

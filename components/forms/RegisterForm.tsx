@@ -11,7 +11,7 @@ import { SubmitHandler, useForm } from "react-hook-form"
 import { StyleSheet, View } from "react-native"
 
 export const RegisterForm = () => {
-    const { mutateAsync: sendCode } = useMutation({
+    const { mutateAsync: sendCode, isPending } = useMutation({
         mutationKey: ['sendConfirmCode'], mutationFn: (tel: string) => rConfirmCode({ tel }),
         onError: (e) => {
             console.log(e)
@@ -33,10 +33,10 @@ export const RegisterForm = () => {
         <Input name="tel" control={control} input={{
             keyboardType: "number-pad", mask: "+7 (999) 999 99 99",
             placeholder: "+7 (777) 322 32 32"
-        }} label="Номер телефона" rules={{ required: "Hello" }} error={errors?.tel?.message} />
+        }} label="Номер телефона" rules={{ required: errorMsgs.required }} error={errors?.tel?.message} />
         <Input name="password" control={control} input={{ secureTextEntry: true, placeholder: "Создайте пароль" }} label="Пароль"
             rules={{
-                required: "Hello",
+                required: errorMsgs.required,
                 validate: {
                     hasNumber: (value) =>
                         /\d/.test(value) || errorMsgs.register.hasNumber,
@@ -51,7 +51,7 @@ export const RegisterForm = () => {
             error={errors.password?.message}
         />
         <Input rules={{
-            required: "HEllo",
+            required: errorMsgs.required,
             validate: {
                 isEqual: (value) => value == password || errorMsgs.register.passwordsDoNotMatch
 
@@ -64,7 +64,7 @@ export const RegisterForm = () => {
                 Я прочитал(а) и согласен(на) с <Link style={[styles.link]} href={'/'}>Условиями использования</Link> и <Link style={[styles.link]} href={'/'}>Политикой конфиденциальности</Link>.
             </Typography>
         </View>
-        <Button disabled={isDisabled} onPress={handleSubmit(submit)}>Создать аккаунт</Button>
+        <Button loading={isPending} disabled={isDisabled || isPending} onPress={handleSubmit(submit)}>Создать аккаунт</Button>
         <Typography style={{ marginTop: 10, textAlign: 'center' }} variant="span">Есть аккаунт? <Link style={[styles.link]} href={'/(auth)/login'}>Войти</Link></Typography>
     </FormContainer >
 }

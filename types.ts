@@ -4,3 +4,7 @@ export interface RegisterDTO {
     tel: string,
     password: string
 }
+export interface LoginDTO {
+    tel: string,
+    password: string
+}

@@ -1,8 +1,11 @@
+import { rConfirmCode, rVerifyCode } from "@/api/auth";
 import { Button, Typography } from "@/components/ui";
 import { Colors } from "@/constants/Colors";
 import { RegisterDTO } from "@/types";
+import { showToast } from "@/utils";
 import { useMutation } from "@tanstack/react-query";
-import { useState } from "react";
+import { useRouter } from "expo-router";
+import { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import {
     CodeField,
@@ -11,7 +14,7 @@ import {
     useClearByFocusCell,
 } from 'react-native-confirmation-code-field';
 
-const CELL_COUNT = 4;
+const CELL_COUNT = 6;
 interface ConfirmationFormProps {
     userData: RegisterDTO
 }
@@ -21,7 +24,24 @@ export const ConfirmationForm = ({ userData }: ConfirmationFormProps) => {
     const [props, getCellOnLayoutHandler] = useClearByFocusCell({
         value,
         setValue,
-    }); return <View style={[styles.container]}>
+    });
+    const router = useRouter()
+    const { mutateAsync: verifyCode, isPending } = useMutation({
+
+        mutationKey: ['verifyCode'], mutationFn: rVerifyCode,
+        onSuccess: (data) => {
+            console.log(data)
+            showToast({ type: 'success', title: "Успешно", desc: "Вы зарегистрировались успешно" })
+            router.push('/(auth)/login')
+        },
+        onError: (e) => {
+            console.log(e)
+        }
+    })
+    const submit = () => {
+        verifyCode({ password: userData.password, phone_number: '+' + userData.tel, code: value, full_name: "1" })
+    }
+    return <View style={[styles.container]}>
         <CodeField
             ref={ref}
             {...props}
@@ -42,12 +62,37 @@ export const ConfirmationForm = ({ userData }: ConfirmationFormProps) => {
                 </Text>
             )}
         />
-        <Pressable style={() => ([styles.again])}
-        >
-            <Typography style={[styles.center, styles.link]} variant="p2">Отправить код заново</Typography>
-        </Pressable>
-        <Button>Продолжить</Button>
+        <AskCodeAgain tel={userData.tel} />
+        <Button onPress={submit}>Продолжить</Button>
     </View>
+}
+const AskCodeAgain = ({ tel }: { tel: string }) => {
+    const { mutateAsync: sendCode } = useMutation({
+        mutationKey: ['sendConfirmCode'], mutationFn: (tel: string) => rConfirmCode({ tel }),
+        onSuccess: () => {
+            setTimer(60)
+        },
+        onError: (e) => {
+            console.log(e)
+        }
+    })
+    console.log(tel)
+    const [timer, setTimer] = useState(60)
+    const disabled = timer > 0
+    useEffect(() => {
+        if (timer <= 0) return;
+
+        const interval = setInterval(() => {
+            setTimer(prevSeconds => prevSeconds - 1);
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, [timer])
+    return <Pressable onPress={() => sendCode(tel)} disabled={disabled} style={[styles.again]}
+    >
+        <Typography color={disabled ? Colors.light.notSelected : Colors.light.primary} style={[styles.center]} variant="p2">Отправить код заново {disabled && `через ${timer} секунд`}</Typography>
+    </Pressable>
+
 }
 const styles = StyleSheet.create({
     container: {
@@ -71,14 +116,11 @@ const styles = StyleSheet.create({
     pressed: {
         backgroundColor: Colors.light.primary,
     },
-    link: {
-        color: Colors.light.primary
-    },
     center: {
         textAlign: 'center'
     },
     code: {
-        maxWidth: 300,
+        maxWidth: 340,
         marginHorizontal: 'auto',
     },
     cell: {

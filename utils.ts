@@ -1,4 +1,6 @@
 import * as ImagePicker from 'expo-image-picker';
+
+import * as SecureStore from 'expo-secure-store';
 import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
 import Toast, { ToastType } from 'react-native-toast-message';
 export const pickImage = async (saveSelected: (value: string[]) => void) => {
@@ -114,6 +116,22 @@ export const showToast = ({ type, title, desc }: { type: ToastType, title: strin
     Toast.show({
         type,
         text1: title,
-        text2: desc
+        text2: desc,
+        text1Style: {
+            fontSize: rS(15),
+        },
+        text2Style: {
+            fontSize: rS(14),
+        }
+
     });
+}
+
+export async function saveToStorage(key: string, value: string) {
+    await SecureStore.setItemAsync(key, value);
+}
+
+export async function getFromStorage(key: string) {
+    const result = await SecureStore.getItemAsync(key);
+    return result
 }
