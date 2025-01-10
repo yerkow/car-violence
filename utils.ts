@@ -135,3 +135,6 @@ export async function getFromStorage(key: string) {
     const result = await SecureStore.getItemAsync(key);
     return result
 }
+export async function deleteFromStorage(key: string) {
+    await SecureStore.deleteItemAsync(key);
+}

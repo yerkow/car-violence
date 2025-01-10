@@ -1,6 +1,7 @@
 import { Colors } from '@/constants/Colors';
 import { useAuth } from '@/hooks/useAuth';
 import { DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import React from 'react';
 
 import * as Sentry from '@sentry/react-native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -42,13 +43,13 @@ const InitialLayout = () => {
     useEffect(() => {
         if (!isLoaded) return;
         const inAuthGroup = segments[0] === '(auth)';
-
-        if (isSignedIn && !inAuthGroup) {
+        if (isSignedIn) {
             router.replace('/');
-        } else if (!isSignedIn && pathname !== '/') {
+        }
+        if (!isSignedIn) {
             router.replace('/(auth)/login');
         }
-    }, [isSignedIn]);
+    }, [isLoaded]);
 
     if (!isLoaded) {
         return (

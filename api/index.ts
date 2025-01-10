@@ -40,7 +40,11 @@ export const customFetch = async <T>({ path, method, query, data, withAuth = fal
     try {
         const response = await fetch(url, { method, headers, body: fetchBody })
         if (!response.ok) {
-            throw new Error(`Fetch failed, STATUS:${response.status}, route:${url}`, { cause: response.status })
+            throw {
+                message: "Fetch failed.",
+                status: response.status,
+                route: response.url
+            }
         }
         const data = await response.json()
         return data

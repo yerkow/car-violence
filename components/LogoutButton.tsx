@@ -1,6 +1,9 @@
 import { Modal } from "@/components";
 import { Button, Typography } from "@/components/ui";
 import { Colors } from "@/constants/Colors";
+import { showToast } from "@/utils";
+import { useRouter } from "expo-router";
+import { deleteItemAsync } from "expo-secure-store";
 import { useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 
@@ -8,7 +11,15 @@ export const LogoutButton = () => {
     const [modalVisible, setModalVisible] = useState(false);
 
     const closeModal = () => setModalVisible(false);
-
+    const router = useRouter()
+    const logout = async () => {
+        Promise.all([deleteItemAsync('access'), deleteItemAsync('refresh')]).then(() => {
+            router.replace('/(auth)/login')
+        }).catch(e => {
+            console.log(e)
+            showToast({ type: 'error', title: "Ошибка", desc: "Что-то пошло не так" })
+        })
+    }
     return <View style={[styles.container]}>
         <Pressable style={[styles.trigger]} onPress={() => setModalVisible(true)}>
             <Typography color="#991B1B" variant="p2">
@@ -21,7 +32,7 @@ export const LogoutButton = () => {
                 <Typography color={Colors.light.notSelected} center variant="p2">Вы уверены, что хотите выйти? Для дальнейшего использования приложения потребуется снова войти в систему.</Typography>
                 <View style={[styles.btns]}>
                     <Button onPress={closeModal} style={[styles.btn]} variant="outline">Отмена</Button>
-                    <Button style={[styles.btn]} variant="primary">Выйти</Button>
+                    <Button onPress={logout} style={[styles.btn]} variant="primary">Выйти</Button>
                 </View>
             </View>
         </Modal>
