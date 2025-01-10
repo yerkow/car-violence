@@ -7,6 +7,7 @@ export const useAuth = () => {
     const [isSignedIn, setIsSignedIn] = useState(false)
     useEffect(() => {
         const check = async () => {
+            console.log('started check')
             rCheckToken().then(() => {
                 setIsSignedIn(true)
             }).catch((e) => {

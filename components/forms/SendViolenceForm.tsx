@@ -11,66 +11,21 @@ import { Link } from "expo-router"
 import React, { useCallback, useRef, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
 import { Dimensions, FlatList, Image, Keyboard, Pressable, StyleSheet, TouchableOpacity, View, ViewProps, ViewToken } from "react-native"
-
-const kazakhstanCities = [
-    "Алматы",
-    "Нур-Султан",
-    "Шымкент",
-    "Караганда",
-    "Актобе",
-    "Тараз",
-    "Павлодар",
-    "Усть-Каменогорск",
-    "Семей",
-    "Костанай",
-    "Атырау",
-    "Кызылорда",
-    "Петропавловск",
-    "Уральск",
-    "Темиртау",
-    "Актау",
-    "Туркестан",
-    "Экибастуз",
-    "Рудный",
-    "Жезказган",
-    "Балхаш",
-    "Кентау",
-    "Талдыкорган",
-    "Кокшетау",
-    "Сатпаев",
-    "Каскелен",
-    "Кульсары",
-    "Риддер",
-    "Шахтинск",
-    "Абай",
-    "Степногорск",
-    "Каратау",
-    "Жанаозен",
-    "Аркалык"
-];
 interface SendViolenceFormProps extends ViewProps {
     medias: string[]
     setMedias: (value: string[]) => void;
     openCamera: () => void
 }
-const width = Dimensions.get('window').width
-const defaultValues = {
-    city: kazakhstanCities[0],
-    street: "",
-    dateTime: {
-        date: new Date(),
-        time: new Date(),
-    },
-    description: ""
-}
 export const SendViolenceForm = ({ medias, openCamera, setMedias, style, ...props }: SendViolenceFormProps) => {
-    const { control, formState: { errors }, handleSubmit } = useForm({
+    const { control, formState: { errors }, handleSubmit, reset } = useForm({
         defaultValues
     })
     const { mutate: send, isPending } = useMutation({
         mutationKey: ['sendViolence'], mutationFn: rSendViolence, onSuccess: (data) => {
             console.log(data)
             showToast({ type: 'success', title: "Отправлено", desc: "Нарушение было отправлено!" })
+            reset()
+            setMedias([])
         }, onError: (e) => {
             showToast({ type: 'error', title: "Ошибка", desc: "Произошла ошибка" })
             console.log(e)
@@ -80,7 +35,7 @@ export const SendViolenceForm = ({ medias, openCamera, setMedias, style, ...prop
         const body = new FormData()
         medias.forEach(media => {
             const details = getFileDetails(media)
-            body.append('video_file', {
+            body.append('videos', {
                 uri: media,
                 name: details?.fileName,
                 type: details?.mimeType
@@ -229,6 +184,7 @@ const MediasView = ({ medias, setMedias, openCamera }: MediasViewProps) => {
     </View>
 }
 
+const width = Dimensions.get('window').width
 const styles = StyleSheet.create({
     container: {
         justifyContent: 'center',
@@ -288,3 +244,50 @@ const styles = StyleSheet.create({
         gap: 8
     }
 })
+const kazakhstanCities = [
+    "Алматы",
+    "Нур-Султан",
+    "Шымкент",
+    "Караганда",
+    "Актобе",
+    "Тараз",
+    "Павлодар",
+    "Усть-Каменогорск",
+    "Семей",
+    "Костанай",
+    "Атырау",
+    "Кызылорда",
+    "Петропавловск",
+    "Уральск",
+    "Темиртау",
+    "Актау",
+    "Туркестан",
+    "Экибастуз",
+    "Рудный",
+    "Жезказган",
+    "Балхаш",
+    "Кентау",
+    "Талдыкорган",
+    "Кокшетау",
+    "Сатпаев",
+    "Каскелен",
+    "Кульсары",
+    "Риддер",
+    "Шахтинск",
+    "Абай",
+    "Степногорск",
+    "Каратау",
+    "Жанаозен",
+    "Аркалык"
+];
+
+const defaultValues = {
+    city: kazakhstanCities[0],
+    street: "",
+    dateTime: {
+        date: new Date(),
+        time: new Date(),
+    },
+    description: ""
+}
+

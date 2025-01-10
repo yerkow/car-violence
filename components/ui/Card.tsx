@@ -13,7 +13,7 @@ interface CardProps extends ViewProps {
     desc: string
 }
 export const Card = ({ variant = 'base', title, color, img, subtitle, desc, style, ...props }: CardProps) => {
-    return <Link href={'/(auth)/login'}><View style={[style, styles[variant], { backgroundColor: color }, styles.container,]} {...props}>
+    return <Link href={'/back'}><View style={[style, styles[variant], { backgroundColor: color }, styles.container,]} {...props}>
         <Image style={[{ width: "100%", height: '100%', borderRadius: 10, flex: 2 }, variant == 'horizontal' && styles.horizontalImg]} source={{ uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTiJ5rAqr1pIi6pHOdFGGijRXcE4HLHqWJNSw&s' }} />
         <View style={[styles.textContainer, variant == 'horizontal' && styles.horizontalText]}>
             <Typography variant="h3">{title}</Typography>

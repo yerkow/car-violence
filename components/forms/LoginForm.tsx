@@ -18,7 +18,7 @@ export const LoginForm = () => {
             if (data) {
                 console.log(data)
                 await saveToStorage('access', data.access)
-                await saveToStorage('refresh', data.access)
+                await saveToStorage('refresh', data.refresh)
                 router.push('/')
             }
             console.log(data)

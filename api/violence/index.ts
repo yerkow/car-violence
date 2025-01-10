@@ -3,5 +3,5 @@ export const rGetMediaList = () => {
     return customFetch({ path: 'mediafiles/list', method: "GET" })
 }
 export const rSendViolence = (body: FormData) => {
-    return customFetch({ path: 'upload-media/', method: "POST", data: body })
+    return customFetch({ path: 'mediafiles/upload/', method: "POST", data: body, withAuth: true })
 }
