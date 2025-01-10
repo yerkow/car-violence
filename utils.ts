@@ -138,3 +138,34 @@ export async function getFromStorage(key: string) {
 export async function deleteFromStorage(key: string) {
     await SecureStore.deleteItemAsync(key);
 }
+export function getFileType(url: string) {
+    // Define known image and video extensions
+    const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'tiff', 'svg'];
+    const videoExtensions = ['mp4', 'mov', 'avi', 'wmv', 'flv', 'mkv', 'webm'];
+
+    try {
+        // Create a new URL object to parse the URL
+        const parsedUrl = new URL(url);
+        // Extract the pathname from the URL
+        const pathname = parsedUrl.pathname;
+        // Extract the file extension by finding the last '.' and getting the substring after it
+        const extension = pathname.split('.').pop()?.toLowerCase()
+
+        // Check if the extension matches known image or video extensions
+        if (extension && imageExtensions.includes(extension)) {
+            return 'image';
+        } else if (extension && videoExtensions.includes(extension)) {
+            return 'video';
+        } else {
+            return 'unknown';
+        }
+    } catch (error) {
+        console.error('Invalid URL:', error);
+        return 'invalid';
+    }
+}
+
+// Example usage
+const url = 'https://example.com/path/to/file.mov';
+const fileType = getFileType(url);
+console.log(`The URL points to a ${fileType}.`);

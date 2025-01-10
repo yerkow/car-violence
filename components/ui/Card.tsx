@@ -3,6 +3,7 @@ import { Colors } from "@/constants/Colors";
 import { rV } from "@/utils";
 import { Entypo } from "@expo/vector-icons";
 import { Link } from "expo-router";
+import { useState } from "react";
 import { Image, StyleSheet, View, ViewProps } from "react-native";
 interface CardProps extends ViewProps {
     variant: 'base' | 'horizontal',
@@ -11,10 +12,17 @@ interface CardProps extends ViewProps {
     subtitle: string,
     color?: string,
     desc: string
+    itemId: number,
 }
-export const Card = ({ variant = 'base', title, color, img, subtitle, desc, style, ...props }: CardProps) => {
-    return <Link href={'/back'}><View style={[style, styles[variant], { backgroundColor: color }, styles.container,]} {...props}>
-        <Image style={[{ width: "100%", height: '100%', borderRadius: 10, flex: 2 }, variant == 'horizontal' && styles.horizontalImg]} source={{ uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTiJ5rAqr1pIi6pHOdFGGijRXcE4HLHqWJNSw&s' }} />
+export const Card = ({ variant = 'base', itemId, title, color, img, subtitle, desc, style, ...props }: CardProps) => {
+    const [uri, setUri] = useState(img)
+    const handleImgError = () => {
+        setUri(
+            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTiJ5rAqr1pIi6pHOdFGGijRXcE4HLHqWJNSw&s'
+        )
+    }
+    return <Link href={`/video/${itemId}`}><View style={[style, styles[variant], { backgroundColor: color }, styles.container,]} {...props}>
+        <Image style={[{ width: "100%", height: '100%', borderRadius: 10, flex: 2 }, variant == 'horizontal' && styles.horizontalImg]} source={{ uri }} />
         <View style={[styles.textContainer, variant == 'horizontal' && styles.horizontalText]}>
             <Typography variant="h3">{title}</Typography>
             <Typography variant="span">{subtitle}</Typography>
