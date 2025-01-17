@@ -8,6 +8,11 @@ export interface LoginDTO {
     tel: string,
     password: string
 }
+export type MediaList = {
+    id: number,
+    video_file: string
+}[]
+
 export interface MediaDTO {
     city: string
     description: string
@@ -15,11 +20,15 @@ export interface MediaDTO {
     street: string
     uploaded_at: string
     user: number
-    videos: {
-        id: number,
-        video_file: string
-    }[]
-    was_at_date: string
+    videos: MediaList, was_at_date: string
     was_at_time: string
 
+}
+
+export interface News {
+    id: number;
+    title: string;
+    text: string;
+    createdAt: string;
+    media: MediaList
 }

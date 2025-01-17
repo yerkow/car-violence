@@ -37,7 +37,6 @@ export const DateTimePicker = ({ required = true, dateValue, timeValue, setValue
     const showTimepicker = () => {
         showMode('time');
     };
-    console.log(dateValue, timeValue)
     return <View style={[styles.container]}>
         <Typography color={bg == 'dark' ? Colors.light.background : Colors.light.text} variant="span">{label}
             {required && <Typography color="red" variant="span"> *</Typography>}

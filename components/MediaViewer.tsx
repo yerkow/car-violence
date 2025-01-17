@@ -13,14 +13,20 @@ interface MediaViewerProps extends ViewProps {
     itemStyle: any
 }
 export const MediaViewer = ({ media, itemStyle, ...props }: MediaViewerProps) => {
+    const [uri, setUri] = useState(media)
     const [modalVisible, setModalVisible] = useState(false);
+    const handleImgError = () => {
+        setUri(
+            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTiJ5rAqr1pIi6pHOdFGGijRXcE4HLHqWJNSw&s'
+        )
+    }
+    console.log(uri)
     const closeModal = () => setModalVisible(false);
-    console.log(media)
     return <View style={[props.style]} {...props}>
         <Pressable onPress={() => setModalVisible(true)}>
             <View style={itemStyle}>
-                {getFileType(media) == 'image' && <Image style={[styles.media]} source={{ uri: media }} />}
-                {getFileType(media) == 'video' && <Video style={[styles.media]} source={media} />}
+                {getFileType(media) == 'image' && <Image style={[styles.media]} source={{ uri }} onError={handleImgError} />}
+                {getFileType(media) == 'video' && <Video style={[styles.media]} source={uri} />}
             </View>
         </Pressable>
         <Modal visible={modalVisible} onRequestClose={closeModal} animationType="fade"  >
@@ -28,13 +34,12 @@ export const MediaViewer = ({ media, itemStyle, ...props }: MediaViewerProps) =>
                 <AntDesign color={Colors.light.primary} size={32} name="close" style={[styles.close]} />
             </Pressable>
             <View style={[styles.modal]}>
-                {getFileType(media) == 'image' && <Image style={[styles.media]} source={{ uri: media }} />}
+                {getFileType(media) == 'image' && <Image style={[styles.media]} source={{ uri }} onError={handleImgError} />}
             </View>
         </Modal>
     </View>
 }
 const styles = StyleSheet.create({
-
     media: {
         width: '100%',
         height: '100%'

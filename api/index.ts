@@ -51,6 +51,7 @@ export const customFetch = async <T>({
         // Append Authorization header if required
         if (withAuth) {
             const token = await getFromStorage('access');
+            console.log(token)
             if (token) {
                 headers.append('Authorization', `Bearer ${token}`);
             }

@@ -4,6 +4,7 @@ export { CustomHeader } from "./CustomHeader";
 export { LinkList, ListItem } from "./LinkList";
 export { LogoutButton } from './LogoutButton';
 export { CustomModal as Modal } from './Modal';
+export { NewsList } from './NewsList';
 export { ProfileSection } from "./ProfileSection";
 export { ScreenContainer } from './ScreenContainer';
 export { Search } from './Search';

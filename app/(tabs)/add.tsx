@@ -31,7 +31,6 @@ export default function Add() {
             setView('camera')
         }
     }, [medias])
-    console.log(medias)
     const closeCameraOnEnd = () => {
         setMedias(prev => {
             if (prev.length === 0) {
