@@ -163,6 +163,7 @@ const mapIndex = (idx: number) => {
         case 1: return 2;
         case 4: return 3;
         case 2: return 4;
-        default: return 0
+        case 0: return 0;
+        default: return idx
     }
 }

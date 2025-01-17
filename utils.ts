@@ -165,7 +165,4 @@ export function getFileType(url: string) {
     }
 }
 
-// Example usage
-const url = 'https://example.com/path/to/file.mov';
-const fileType = getFileType(url);
-console.log(`The URL points to a ${fileType}.`);
+

@@ -1,4 +1,5 @@
-import { CustomHeader, ListItem, LogoutButton, ProfileSection, ScreenContainer, UserBalance } from "@/components";
+import { CustomHeader, ListItem, LogoutButton, ProfileSection, ScreenContainer } from "@/components";
+import { UserBalance } from "@/components/UserBalance";
 import { rS } from "@/utils";
 import { Tabs } from "expo-router";
 import { ScrollView, StyleSheet } from "react-native";

@@ -1,5 +1,5 @@
-import { rRefreshToken } from "@/api/auth";
-import { getFromStorage, saveToStorage } from "@/utils";
+import { getFromStorage, saveToStorage } from "../utils";
+import { rRefreshToken } from "./auth";
 
 export const methods = {
     post: "POST",
@@ -58,12 +58,24 @@ export const customFetch = async <T>({
 
         // Define a function to execute the fetch request
         const executeFetch = async (): Promise<Response> => {
-            const response = await fetch(url.toString(), {
-                method,
-                headers,
-                body: fetchBody,
-            });
-            return response;
+            console.log(url)
+            const controller = new AbortController();
+            const timeout = 10000;
+
+            // Wrap the abort call in an arrow function
+            const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+            try {
+                const response = await fetch(url.toString(), {
+                    method,
+                    headers,
+                    body: fetchBody,
+                    signal: controller.signal,
+                });
+                return response;
+            } finally {
+                clearTimeout(timeoutId); // Ensure timeout is cleared regardless of success or error
+            }
         };
 
         // Execute the initial fetch request
@@ -82,14 +94,16 @@ export const customFetch = async <T>({
 
         // Check for other non-success status codes
         if (!response.ok) {
-            throw new Error(`Request failed with status ${response.status}: ${response.statusText}`);
+            throw {
+                cause: response.status
+            };
         }
 
         // Parse and return the response data
         const responseData: T = await response.json();
         return responseData;
     } catch (error) {
-        console.error('customFetch error:', error);
+        console.log('customFetch error:', error);
         throw error;
     }
 };
@@ -110,7 +124,7 @@ const revalidateToken = async (): Promise<string | null> => {
         }
         return null;
     } catch (error) {
-        console.error('Token revalidation error:', error);
+        console.log('Token revalidation error:', error);
         return null;
     }
 };

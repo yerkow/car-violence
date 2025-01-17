@@ -2,7 +2,7 @@ import { Typography } from "@/components/ui";
 import { Colors } from "@/constants/Colors";
 import { rS, rV } from "@/utils";
 import { FontAwesome5 } from "@expo/vector-icons";
-import Contants from 'expo-constants';
+import Constants from 'expo-constants';
 import { useState } from "react";
 import { Dimensions, Modal, Pressable, StyleSheet, View } from "react-native";
 
@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
     container: {
         width: Dimensions.get('window').width,
         backgroundColor: Colors.light.slate200,
-        marginTop: Contants.statusBarHeight,
+        marginTop: Constants.statusBarHeight,
         alignItems: 'center',
         paddingVertical: rV(10),
         paddingHorizontal: rS(10),
@@ -45,6 +45,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     modal: {
-        paddingTop: Contants.statusBarHeight
+        paddingTop: Constants.statusBarHeight
     }
 })

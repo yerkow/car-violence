@@ -1,4 +1,4 @@
-import { Modal } from "@/components";
+import { CustomModal as Modal } from "./Modal";
 import { Button, Typography } from "@/components/ui";
 import { Colors } from "@/constants/Colors";
 import { showToast } from "@/utils";

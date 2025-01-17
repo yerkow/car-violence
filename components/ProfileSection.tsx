@@ -1,7 +1,7 @@
-import { EditProfileButton } from "@/components/EditProfileButton"
 import { Typography } from "@/components/ui"
 import { Colors } from "@/constants/Colors"
 import { Image, StyleSheet, View, ViewProps } from "react-native"
+import { EditProfileButton } from "./EditProfileButton"
 const lvl = [require("../assets/user/lvl-1.png"), require("../assets/user/lvl-2.png"), require("../assets/user/lvl-3.png"), require("../assets/user/lvl-4.png"), require("../assets/user/lvl-5.png"),]
 export const ProfileSection = ({ style, ...props }: ViewProps) => {
     return <View style={[styles.container, style]}>

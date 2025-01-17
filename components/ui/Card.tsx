@@ -21,8 +21,8 @@ export const Card = ({ variant = 'base', itemId, title, color, img, subtitle, de
             'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTiJ5rAqr1pIi6pHOdFGGijRXcE4HLHqWJNSw&s'
         )
     }
-    return <Link href={`/video/${itemId}`}><View style={[style, styles[variant], { backgroundColor: color }, styles.container,]} {...props}>
-        <Image style={[{ width: "100%", height: '100%', borderRadius: 10, flex: 2 }, variant == 'horizontal' && styles.horizontalImg]} source={{ uri }} />
+    return <Link href={`/(tabs)/video/${itemId}`}><View style={[style, styles[variant], { backgroundColor: color }, styles.container,]} {...props}>
+        <Image style={[{ width: "100%", height: '100%', borderRadius: 10, flex: 2 }, variant == 'horizontal' && styles.horizontalImg]} source={{ uri }} onError={handleImgError} />
         <View style={[styles.textContainer, variant == 'horizontal' && styles.horizontalText]}>
             <Typography variant="h3">{title}</Typography>
             <Typography variant="span">{subtitle}</Typography>
@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         borderRadius: 10,
         gap: 2,
-        height: rV(120)
+        height: rV(90)
     },
     horizontalImg: {
         flex: 4,

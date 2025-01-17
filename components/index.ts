@@ -8,6 +8,5 @@ export { ProfileSection } from "./ProfileSection";
 export { ScreenContainer } from './ScreenContainer';
 export { Search } from './Search';
 export { Tabbar } from "./Tabbar";
-export { UserBalance } from "./UserBalance";
 export { Video } from './Video';
 

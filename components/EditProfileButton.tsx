@@ -1,4 +1,4 @@
-import { Modal } from "@/components";
+import { CustomModal as Modal } from "./Modal";
 import { EditProfileForm } from "@/components/forms";
 import { Colors } from "@/constants/Colors";
 import { FontAwesome } from "@expo/vector-icons";

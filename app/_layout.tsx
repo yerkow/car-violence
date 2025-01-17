@@ -14,6 +14,7 @@ import { useEffect } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 import 'react-native-reanimated';
 import Toast from 'react-native-toast-message';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
@@ -22,6 +23,7 @@ const navigationIntegration = Sentry.reactNavigationIntegration({
     enableTimeToInitialDisplay: !isRunningInExpoGo(),
 });
 
+export const client = new QueryClient()
 Sentry.init({
     dsn: 'https://e57e7175a1d55d2ffe56d50bedd0d2a5@o4508606759829504.ingest.de.sentry.io/4508606788993104',
     debug: false, // If `true`, Sentry will try to print out useful debugging information if something goes wrong with sending the event. Set it to `false` in production
@@ -62,7 +64,6 @@ const InitialLayout = () => {
         <Stack>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-            <Stack.Screen name="video/[id]" />
             <Stack.Screen name="+not-found" />
         </Stack>
         <StatusBar style="auto" />
@@ -88,14 +89,15 @@ function RootLayout() {
         return null;
     }
 
-    const client = new QueryClient()
     return (
-        <ThemeProvider value={DefaultTheme}>
-            <QueryClientProvider client={client}>
-                <InitialLayout />
-            </QueryClientProvider>
-            <Toast />
-        </ThemeProvider>
+        <GestureHandlerRootView>
+            <ThemeProvider value={DefaultTheme}>
+                <QueryClientProvider client={client}>
+                    <InitialLayout />
+                </QueryClientProvider>
+                <Toast />
+            </ThemeProvider>
+        </GestureHandlerRootView>
     );
 }
 export default Sentry.wrap(RootLayout)

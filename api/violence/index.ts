@@ -1,5 +1,5 @@
-import { customFetch } from "@/api"
-import { MediaDTO } from "@/types"
+import { MediaDTO } from "../../types"
+import { customFetch } from "../"
 export const rGetMediaList = (): Promise<MediaDTO[] | undefined> => {
     return customFetch({ path: 'mediafiles/list', method: "GET", withAuth: true })
 }
