@@ -10,7 +10,7 @@ import { ActivityIndicator, SafeAreaView, ScrollView, StyleSheet, View } from "r
 export default function MyVideos() {
     const { data: medias, isLoading, isError, error } = useQuery({
         queryKey: ['myVideos'], queryFn: async () => {
-            const data = await rGetMediaList()
+            const data = await rGetMediaList({ type: 'user', limit: 100 })
             return data
         }
     })

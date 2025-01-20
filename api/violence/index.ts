@@ -1,7 +1,9 @@
 import { customFetch } from "../"
 import { MediaDTO, News } from "../../types"
-export const rGetMediaList = (): Promise<MediaDTO[] | undefined> => {
-    return customFetch({ path: 'mediafiles/list', method: "GET", withAuth: true })
+export const rGetMediaList = (query: { type: string, limit: number }): Promise<MediaDTO[] | undefined> => {
+    return customFetch({
+        path: 'mediafiles/list', method: "GET", withAuth: true, query
+    })
 }
 
 export const rGetMediaById = (id: number): Promise<MediaDTO | undefined> => {

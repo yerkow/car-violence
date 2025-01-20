@@ -21,12 +21,12 @@ export const Card = ({ variant = 'base', link, title, color, img, subtitle, desc
             'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTiJ5rAqr1pIi6pHOdFGGijRXcE4HLHqWJNSw&s'
         )
     }
-    console.log(link, "LINK")
+    const isHorizontal = variant == 'horizontal'
     return <Link href={link}><View style={[style, styles[variant], { backgroundColor: color }, styles.container,]} {...props}>
-        <Image style={[{ width: "100%", height: '100%', borderRadius: 10, flex: 2 }, variant == 'horizontal' && styles.horizontalImg]} source={{ uri }} onError={handleImgError} />
-        <View style={[styles.textContainer, variant == 'horizontal' && styles.horizontalText]}>
-            <Typography variant="h3">{title}</Typography>
-            <Typography variant="span">{subtitle}</Typography>
+        <Image style={[{ width: "100%", height: '100%', borderRadius: 10, flex: 2 }, isHorizontal && styles.horizontalImg]} source={{ uri }} onError={handleImgError} />
+        <View style={[styles.textContainer, isHorizontal && styles.horizontalText]}>
+            <Typography center={!isHorizontal} variant="h3">{title}</Typography>
+            <Typography center={!isHorizontal} variant="span">{subtitle}</Typography>
             <Typography variant="p2">{desc.length > 40 ? desc.slice(0, 40) + "..." : desc}</Typography>
         </View>
         {variant == 'horizontal' &&
@@ -63,6 +63,7 @@ const styles = StyleSheet.create({
         flex: 1
     },
     textContainer: {
+        width: '100%',
         gap: 5,
         paddingLeft: 5,
         flex: 1,

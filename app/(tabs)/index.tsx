@@ -1,9 +1,11 @@
+import { rGetMediaList } from "@/api/violence";
 import { NewsList, ScreenContainer, Search } from "@/components";
 import { Card, Typography } from "@/components/ui";
-import { mockCardData } from "@/constants/Colors";
 import { rS, rV } from "@/utils";
+import { useQuery } from "@tanstack/react-query";
 import { Tabs } from "expo-router";
-import { Dimensions, SafeAreaView, ScrollView, StyleSheet } from "react-native";
+import React from 'react';
+import { ActivityIndicator, Dimensions, SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
 
 
 export default function HomeScreen() {
@@ -15,12 +17,37 @@ export default function HomeScreen() {
                 <ScrollView contentContainerStyle={[styles.container]} showsVerticalScrollIndicator={false}>
                     <NewsList />
                     <Typography center variant="h2">Последние нарушения</Typography>
-                    {mockCardData.map((item) => <Card link={'/'} variant="base" key={item.title} style={[styles.violences]} {...item} />)}
+                    <LastViolenceList />
                 </ScrollView>
             </SafeAreaView>
         </ScreenContainer >
     );
 }
+
+const LastViolenceList = () => {
+    const { data: medias, isLoading, isError, error } = useQuery({
+        queryKey: ['myVideos'], queryFn: async () => {
+            const data = await rGetMediaList({ type: 'all', limit: 10 })
+            return data
+        }
+    })
+
+
+    return isLoading ? <View >
+        <ActivityIndicator />
+    </View> : isError && error?.cause !== 404 ?
+        <Typography center variant="span" color="red">Ошибка</Typography> :
+        medias && medias.length > 0 ?
+            <View style={[styles.violenceContainer]}>
+                {medias.map(item => <Card link={`/(tabs)/video/${item.id}`} style={[styles.violences]} subtitle={item.city} key={item.id} variant="base"
+                    title={item.id.toString()} desc={item.description} img={item.videos[0].video_file}
+                />)
+                }
+            </View>
+            :
+            <Typography center variant="span" color="green">Не найдено</Typography>
+}
+
 
 const styles = StyleSheet.create({
     container: {
