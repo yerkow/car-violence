@@ -1,11 +1,11 @@
 import { rGetMediaList } from "@/api/violence";
-import { NewsList, ScreenContainer, Search } from "@/components";
+import { LoaderView, NewsList, ScreenContainer, Search } from "@/components";
 import { Card, Typography } from "@/components/ui";
 import { rS, rV } from "@/utils";
 import { useQuery } from "@tanstack/react-query";
 import { Tabs } from "expo-router";
 import React from 'react';
-import { ActivityIndicator, Dimensions, SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
+import { Dimensions, SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
 
 
 export default function HomeScreen() {
@@ -34,7 +34,7 @@ const LastViolenceList = () => {
 
 
     return isLoading ? <View >
-        <ActivityIndicator />
+        <LoaderView />
     </View> : isError && error?.cause !== 404 ?
         <Typography center variant="span" color="red">Ошибка</Typography> :
         medias && medias.length > 0 ?

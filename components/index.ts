@@ -2,6 +2,7 @@
 export { Camera } from './CameraView';
 export { CustomHeader } from "./CustomHeader";
 export { LinkList, ListItem } from "./LinkList";
+export { LoaderView } from './LoaderView';
 export { LogoutButton } from './LogoutButton';
 export { CustomModal as Modal } from './Modal';
 export { NewsList } from './NewsList';

@@ -1,12 +1,12 @@
 import { rGetMediaById } from "@/api/violence";
-import { CustomHeader, ScreenContainer } from "@/components";
+import { CustomHeader, LoaderView, ScreenContainer } from "@/components";
 import { MediaViewer } from "@/components/MediaViewer";
 import { Alert, Typography } from "@/components/ui";
 import { Colors } from "@/constants/Colors";
 import { useQuery } from "@tanstack/react-query";
 import { Tabs, useLocalSearchParams } from "expo-router";
 import React from 'react';
-import { ActivityIndicator, Dimensions, FlatList, SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
+import { Dimensions, FlatList, SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
 
 const width = Dimensions.get('window').width
 export default function VideoScreen() {
@@ -20,7 +20,8 @@ export default function VideoScreen() {
     return <ScreenContainer keyDismiss={false}>
         <Tabs.Screen options={{ header: () => <CustomHeader title="Видео" /> }} />
         <SafeAreaView>
-            {isLoading && <ActivityIndicator size={'large'} />}
+            {isLoading && <LoaderView />
+            }
             {error?.cause == 404 && <Typography variant="p2" color="green">Не найдено</Typography>}
             {error && <Typography variant="p2" color="red">Ошибка</Typography>}
             {data ?

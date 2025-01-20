@@ -1,10 +1,10 @@
 import { rGetMediaList } from "@/api/violence";
-import { CustomHeader, ScreenContainer } from "@/components";
+import { CustomHeader, LoaderView, ScreenContainer } from "@/components";
 import { Card, Typography } from "@/components/ui";
 import { Colors } from "@/constants/Colors";
 import { useQuery } from "@tanstack/react-query";
 import { Tabs } from "expo-router";
-import { ActivityIndicator, SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
+import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
 
 
 export default function MyVideos() {
@@ -17,7 +17,7 @@ export default function MyVideos() {
     return <ScreenContainer>
         <Tabs.Screen options={{ header: (props) => <CustomHeader showBack={false} title="Мои видео" /> }} />
         {isLoading ? <View>
-            <ActivityIndicator />
+            <LoaderView />
         </View> : isError && error?.cause !== 404 ?
             <Typography center variant="span" color="red">Ошибка</Typography> :
             medias && medias.length > 0 ?
