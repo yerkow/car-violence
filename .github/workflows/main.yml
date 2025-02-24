@@ -40,3 +40,22 @@ jobs:
 
       - name: Build Android APK/AAB
         run: eas build --platform android --profile production --non-interactive --local
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: android-app
+          path: ./build-*.apk
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.${{ github.run_number }}
+          name: "Release v1.0.${{ github.run_number }}"
+          body: "Auto-generated release from CI/CD pipeline."
+          draft: false
+          prerelease: false
+          files: ./build-*.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
