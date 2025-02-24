@@ -7,7 +7,7 @@ on:
 
 jobs:
   Build-for-android:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -54,8 +54,8 @@ jobs:
           tag_name: v1.0.${{ github.run_number }}
           name: "Release v1.0.${{ github.run_number }}"
           body: "Auto-generated release from CI/CD pipeline."
-          draft: false
-          prerelease: false
+          draft: true
+          prerelease: true
           files: ./build-*.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
