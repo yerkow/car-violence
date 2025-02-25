@@ -1,0 +1,144 @@
+name: Expo CI CD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  Build-android:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        type: [preview, production]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Cache Node.js modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Cache Expo and EAS CLI
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm-global
+          key: ${{ runner.os }}-expo-${{ hashFiles('package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-expo-
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.x'
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Set npm global path
+        run: |
+          npm config set prefix ~/.npm-global
+          echo "$HOME/.npm-global/bin" >> $GITHUB_PATH
+
+      - name: Install Expo CLI and EAS CLI
+        run: |
+          npm install -g expo-cli eas-cli
+          echo "$HOME/.npm-global/bin" >> $GITHUB_PATH
+
+      - name: Check EAS installation
+        run: |
+          which eas || echo "EAS not found"
+          eas --version || echo "EAS not working"
+
+      - name: Authenticate with Expo
+        uses: expo/expo-github-action@v7
+        with:
+          expo-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build Android (${{ matrix.type }})
+        run: |
+          if [ "${{ matrix.type }}" == "preview" ]; then
+            npx eas build --platform android --profile preview --non-interactive --local
+          else
+            npx eas build --platform android --profile production --non-interactive --local
+          fi
+
+      - name: Upload APK (Preview)
+        if: matrix.type == 'preview'
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-preview-apk
+          path: ./build-*.apk
+
+      - name: Upload AAB (Production)
+        if: matrix.type == 'production'
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-production-aab
+          path: ./build-*.aab
+
+  Build-ios:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Cache Node.js modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Cache Expo and EAS CLI
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm-global
+          key: ${{ runner.os }}-expo-${{ hashFiles('package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-expo-
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.x'
+
+      - name: Install Expo CLI and EAS CLI
+        run: |
+          npm install -g expo-cli eas-cli
+          echo "$HOME/.npm-global/bin" >> $GITHUB_PATH
+
+      - name: Check EAS installation
+        run: |
+          which eas || echo "EAS not found"
+          eas --version || echo "EAS not working"
+
+      - name: Authenticate with Expo
+        uses: expo/expo-github-action@v7
+        with:
+          expo-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build iOS (Production)
+        run: npx eas build --platform ios --profile production --non-interactive --local
+
+      - name: Upload IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-production-ipa
+          path: ./build-*.ipa
